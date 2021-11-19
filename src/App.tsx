@@ -1,5 +1,6 @@
 import React from "react";
 import { Login } from "./containers/Login";
+import { Home } from "./containers/Home";
 import "./App.css";
 import {
   BrowserRouter as Router,
@@ -15,6 +16,7 @@ function App() {
         <Routes>
           <Route path="" element={<Navigate to="/login" />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/home" element={<Home />} />
         </Routes>
       </div>
     </Router>

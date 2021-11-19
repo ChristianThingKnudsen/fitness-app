@@ -32,7 +32,7 @@ export function Login() {
           localStorage.setItem("jwt", response.jwt);
           localStorage.setItem("email", email);
           localStorage.setItem("password", password);
-          navigate("/lol");
+          navigate("/home");
         },
         (error) => {
           console.log(JSON.stringify(error));
