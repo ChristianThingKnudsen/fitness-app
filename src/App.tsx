@@ -1,6 +1,6 @@
 import React from "react";
 import { Login } from "./containers/Login";
-import { Home } from "./containers/Home";
+import { HomeManager } from "./containers/HomeManager";
 import "./App.css";
 import {
   BrowserRouter as Router,
@@ -16,7 +16,7 @@ function App() {
         <Routes>
           <Route path="" element={<Navigate to="/login" />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/home" element={<Home />} />
+          <Route path="/homeManager" element={<HomeManager />} />
         </Routes>
       </div>
     </Router>

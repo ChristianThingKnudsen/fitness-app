@@ -1,24 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { baseUrl } from "../env";
 import { useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import "./Login.css";
+import jwt_decode from "jwt-decode";
 
 export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [user, setUser] = useState("");
   const navigate = useNavigate();
 
   function validateForm() {
     return email.length > 0 && password.length > 0;
   }
 
+  function findUserType(email: string) {
+    const requestOptions = {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email, password: password }),
+    };
+  }
+
   function handleSubmit(event: any) {
     event.preventDefault();
-    console.log("Submit:");
-    console.log(email);
-    console.log(password);
+    console.log("Submit:" + email + " " + password);
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -30,9 +38,25 @@ export function Login() {
         (response) => {
           console.log(JSON.stringify(response));
           localStorage.setItem("jwt", response.jwt);
-          localStorage.setItem("email", email);
-          localStorage.setItem("password", password);
-          navigate("/home");
+          console.log(
+            "JWT decoded: " + JSON.stringify(jwt_decode(response.jwt))
+          );
+          var decoded: any = jwt_decode(response.jwt);
+          var accountType: string = decoded["Role"];
+          console.log("AccountType: " + accountType);
+          switch (accountType) {
+            case "Manager":
+              navigate("/homeManager");
+              break;
+            case "PersonalTrainer":
+              navigate("/homePersonalTrainer");
+              break;
+            case "Client":
+              navigate("/homeClient");
+              break;
+            default:
+              console.log("ERROR: Could not find account type: " + accountType);
+          }
         },
         (error) => {
           console.log(JSON.stringify(error));
