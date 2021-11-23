@@ -1,5 +1,5 @@
 import { AppBar, Button, IconButton, Toolbar, Typography } from "@mui/material";
-import { NavLink } from "react-router-dom";
+import { BrowserRouter, NavLink } from "react-router-dom";
 
 export function ManagerNavBar(props: any) {
   return (

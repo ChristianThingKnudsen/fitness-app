@@ -3,8 +3,7 @@ import { useState } from "react";
 import Form from "react-bootstrap/Form";
 import { baseUrl } from "../env";
 import jwt_decode from "jwt-decode";
-import { AppBar, IconButton, Toolbar, Typography } from "@mui/material";
-import { NavLink } from "react-router-dom";
+import { ManagerNavBar } from "../NavBars/ManagerNavBar";
 
 export function CreateTrainer() {
   const [firstName, setFirstName] = useState("");
@@ -70,6 +69,7 @@ export function CreateTrainer() {
 
   return (
     <div className="createTrainer">
+      <ManagerNavBar name={user.Name} />
       <h1>Create trainer</h1>
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="FirstName">

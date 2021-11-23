@@ -37,13 +37,13 @@ export function Login() {
           console.log("AccountType: " + accountType);
           switch (accountType) {
             case "Manager":
-              navigate("/manager/home");
+              navigate("/manager");
               break;
             case "PersonalTrainer":
-              navigate("/personal-trainer/home");
+              navigate("/personal-trainer");
               break;
             case "Client":
-              navigate("/client/home");
+              navigate("/client");
               break;
             default:
               console.log("ERROR: Could not find account type: " + accountType);
