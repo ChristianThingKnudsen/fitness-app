@@ -8,6 +8,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { CreateTrainer } from "./containers/CreateTrainer";
 
 function App() {
   return (
@@ -16,7 +17,10 @@ function App() {
         <Routes>
           <Route path="" element={<Navigate to="/login" />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/homeManager" element={<HomeManager />} />
+          <Route path="/manager" element={<HomeManager />}>
+            {/* <Route path="/manager/home" element={<HomeManager />} /> */}
+            <Route path="manager/create-trainer" element={<CreateTrainer />} />
+          </Route>
         </Routes>
       </div>
     </Router>

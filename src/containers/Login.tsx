@@ -9,19 +9,10 @@ import jwt_decode from "jwt-decode";
 export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [user, setUser] = useState("");
   const navigate = useNavigate();
 
   function validateForm() {
     return email.length > 0 && password.length > 0;
-  }
-
-  function findUserType(email: string) {
-    const requestOptions = {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: email, password: password }),
-    };
   }
 
   function handleSubmit(event: any) {
@@ -46,13 +37,13 @@ export function Login() {
           console.log("AccountType: " + accountType);
           switch (accountType) {
             case "Manager":
-              navigate("/homeManager");
+              navigate("/manager/home");
               break;
             case "PersonalTrainer":
-              navigate("/homePersonalTrainer");
+              navigate("/personal-trainer/home");
               break;
             case "Client":
-              navigate("/homeClient");
+              navigate("/client/home");
               break;
             default:
               console.log("ERROR: Could not find account type: " + accountType);
