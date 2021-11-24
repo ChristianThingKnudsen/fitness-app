@@ -1,41 +1,52 @@
-import Button from "react-bootstrap/Button";
-import { useState } from "react";
-import Form from "react-bootstrap/Form";
-import { baseUrl } from "../env";
-import jwt_decode from "jwt-decode";
+import { useEffect, useState } from "react";
+import { Button, Form } from "react-bootstrap";
 import { ManagerNavBar } from "../NavBars/ManagerNavBar";
-import { useNavigate } from "react-router-dom";
+import jwt_decode from "jwt-decode";
+import { useNavigate, useParams } from "react-router-dom";
+import { baseUrl } from "../env";
 
-export function CreateTrainer() {
+export function EditTrainer() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const jwt = localStorage.getItem("jwt");
   const navigate = useNavigate();
+  const { id } = useParams();
 
   var user: any;
   if (jwt != null) {
     user = jwt_decode(jwt);
   }
 
+  useEffect(() => {
+    console.log("Edit ID: " + id);
+
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      },
+    };
+    fetch(baseUrl + "api/Users/" + id, requestOptions)
+      .then((res) => res.json())
+      .then(
+        (response) => {
+          setFirstName(response.firstName);
+          setLastName(response.lastName);
+          setEmail(response.email);
+        },
+        (error) => {
+          console.log(JSON.stringify(error));
+        }
+      );
+  }, []);
+
   function handleSubmit(event: any) {
     event.preventDefault();
 
-    console.log(
-      "Submit:" +
-        firstName +
-        " " +
-        lastName +
-        " " +
-        email +
-        " " +
-        password +
-        " " +
-        jwt
-    );
     const requestOptions = {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${jwt}`,
@@ -44,11 +55,10 @@ export function CreateTrainer() {
         firstName: firstName,
         lastName: lastName,
         email: email,
-        password: password,
         accountType: "PersonalTrainer",
       }),
     };
-    fetch(baseUrl + "api/Users", requestOptions)
+    fetch(baseUrl + "api/Users/" + id, requestOptions)
       .then((res) => res.json())
       .then(
         (response) => {
@@ -63,18 +73,13 @@ export function CreateTrainer() {
   }
 
   function validateForm() {
-    return (
-      email.length > 0 &&
-      password.length > 0 &&
-      firstName.length > 0 &&
-      lastName.length > 0
-    );
+    return email.length > 0 && firstName.length > 0 && lastName.length > 0;
   }
 
   return (
-    <div className="createTrainer">
+    <div className="editTrainer">
       <ManagerNavBar name={user.Name} />
-      <h1>Create trainer</h1>
+      <h1>Edit trainer</h1>
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="FirstName">
           <Form.Label>First name</Form.Label>
@@ -104,16 +109,6 @@ export function CreateTrainer() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-          />
-        </Form.Group>
-        <Form.Group controlId="Password">
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            size="lg"
-            autoFocus
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Group>
         <Button size="lg" type="submit" disabled={!validateForm()}>

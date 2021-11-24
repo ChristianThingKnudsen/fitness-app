@@ -1,10 +1,13 @@
 import jwt_decode from "jwt-decode";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { baseUrl } from "../env";
 import { ManagerNavBar } from "../NavBars/ManagerNavBar";
 
 export function HomeManager() {
   const jwt = localStorage.getItem("jwt");
+  const navigate = useNavigate();
+
   var user: any;
   if (jwt != null) {
     user = jwt_decode(jwt);
@@ -35,13 +38,35 @@ export function HomeManager() {
       );
   }, []);
 
-  useEffect(() => {
-    console.log("All trainers: " + JSON.stringify(allTrainers));
-  }, [allTrainers]);
+  function deleteUser(uid: string) {
+    console.log("URL delete: " + baseUrl + "api/Users/" + uid);
+
+    const requestOptions = {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      },
+    };
+    fetch(baseUrl + "api/Users/" + uid, requestOptions).then(
+      (response) => {
+        console.log("Response delete: " + JSON.stringify(response));
+        const newList = allTrainers.filter((item: any) => {
+          return item.userId !== uid;
+        });
+        setAllTrainers(newList);
+      },
+      (error) => {
+        console.log("Error delete: " + error);
+      }
+    );
+  }
+
+  function editUser(userId: string) {
+    navigate("/manager/edit-trainer/" + userId);
+  }
 
   if (allTrainers != null && allTrainers != "") {
-    console.log("Not null");
-    console.log("All trainers: " + JSON.stringify(allTrainers[0]));
     return (
       <div className="HomeManager">
         <ManagerNavBar name={user.Name} />
@@ -50,8 +75,10 @@ export function HomeManager() {
         <div>
           {allTrainers.map(function (item: any) {
             return (
-              <li>
+              <li key={item.userId}>
                 {item.firstName} {item.lastName}
+                <button onClick={() => deleteUser(item.userId)}>Delete</button>
+                <button onClick={() => editUser(item.userId)}>Edit</button>
               </li>
             );
           })}
@@ -59,8 +86,6 @@ export function HomeManager() {
       </div>
     );
   } else {
-    console.log("Null");
-    console.log("All trainers: " + JSON.stringify(allTrainers[0]));
     return (
       <div className="HomeManager">
         <ManagerNavBar name={user.Name} />
