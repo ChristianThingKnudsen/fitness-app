@@ -3,6 +3,17 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { baseUrl } from "../env";
 import { ManagerNavBar } from "../NavBars/ManagerNavBar";
+import {
+  List,
+  ListItem,
+  Box,
+  IconButton,
+  Button,
+  ListItemText,
+  makeStyles,
+  Grid,
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 
 export function HomeManager() {
   const jwt = localStorage.getItem("jwt");
@@ -72,17 +83,53 @@ export function HomeManager() {
         <ManagerNavBar name={user.Name} />
         <h1>Home Manager</h1>
         <div>Here are all the trainers: </div>
-        <div>
-          {allTrainers.map(function (item: any) {
-            return (
-              <li key={item.userId}>
-                {item.firstName} {item.lastName}
-                <button onClick={() => deleteUser(item.userId)}>Delete</button>
-                <button onClick={() => editUser(item.userId)}>Edit</button>
-              </li>
-            );
-          })}
-        </div>
+        <Box sx={{ width: "100%", maxWidth: 500, bgcolor: "background.paper" }}>
+          <List disablePadding>
+            {allTrainers.map(function (item: any) {
+              return (
+                <ListItem
+                  key={item.userId}
+                  sx={{
+                    bgcolor: "white",
+                    boxShadow: 7,
+                    borderRadius: 4,
+                    p: 2,
+                    mx: 5,
+                    my: 2,
+                  }}
+                  // bgcolor="primary.main"
+                  // secondaryAction={
+                  //   <IconButton edge="end" aria-label="edit">
+                  //     <EditIcon />
+                  //   </IconButton>
+                  // }
+                >
+                  <ListItemText
+                    primary={item.firstName + " " + item.lastName}
+                  />
+
+                  <Button
+                    variant="contained"
+                    onClick={() => deleteUser(item.userId)}
+                  >
+                    Delete
+                  </Button>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      boxShadow: 7,
+                      borderRadius: 1,
+                      mx: 2,
+                    }}
+                    onClick={() => editUser(item.userId)}
+                  >
+                    Edit
+                  </Button>
+                </ListItem>
+              );
+            })}
+          </List>
+        </Box>
       </div>
     );
   } else {

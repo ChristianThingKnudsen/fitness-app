@@ -1,5 +1,5 @@
 import { AppBar, Button, IconButton, Toolbar, Typography } from "@mui/material";
-import { BrowserRouter, NavLink } from "react-router-dom";
+import { BrowserRouter, NavLink, Link } from "react-router-dom";
 
 export function ManagerNavBar(props: any) {
   return (
@@ -14,11 +14,30 @@ export function ManagerNavBar(props: any) {
         <Typography variant="h6" color="inherit" component="div">
           {"Signed in as manager: " + props.name}
         </Typography>
-        <Button color="inherit">
-          <NavLink to="/manager">Home</NavLink>
+        <Button
+          color="secondary"
+          variant="contained"
+          sx={{
+            boxShadow: 7,
+            borderRadius: 1,
+            mx: 2,
+          }}
+          component={Link}
+          to="/manager"
+        >
+          Home
         </Button>
-        <Button color="inherit">
-          <NavLink to="create-trainer">Create trainer</NavLink>
+        <Button
+          color="secondary"
+          variant="contained"
+          sx={{
+            boxShadow: 7,
+            borderRadius: 1,
+          }}
+          component={Link}
+          to="create-trainer"
+        >
+          Create trainer
         </Button>
       </Toolbar>
     </AppBar>

@@ -1,10 +1,11 @@
-import Button from "react-bootstrap/Button";
+// import Button from "react-bootstrap/Button";
 import { useState } from "react";
 import Form from "react-bootstrap/Form";
 import { baseUrl } from "../env";
 import jwt_decode from "jwt-decode";
 import { ManagerNavBar } from "../NavBars/ManagerNavBar";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@mui/material";
 
 export function CreateTrainer() {
   const [firstName, setFirstName] = useState("");
@@ -116,7 +117,21 @@ export function CreateTrainer() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Group>
-        <Button size="lg" type="submit" disabled={!validateForm()}>
+        {/* <Button size="lg" type="submit" disabled={!validateForm()}>
+          Submit
+        </Button> */}
+        <br />
+
+        <Button
+          variant="contained"
+          type="submit"
+          disabled={!validateForm()}
+          sx={{
+            boxShadow: 7,
+            borderRadius: 1,
+            mx: 2,
+          }}
+        >
           Submit
         </Button>
       </Form>
