@@ -72,7 +72,6 @@ export function HomeManager() {
       }
     );
   }
-
   function editUser(userId: string) {
     navigate("/manager/edit-trainer/" + userId);
   }
