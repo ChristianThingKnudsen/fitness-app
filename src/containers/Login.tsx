@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { baseUrl } from "../env";
+import { AccountType, baseUrl, UserDecoded } from "../env";
 import { useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
+import { Button } from "@mui/material";
 import "./Login.css";
 import jwt_decode from "jwt-decode";
 
@@ -10,6 +10,35 @@ export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const jwt = localStorage.getItem("jwt");
+  var user: UserDecoded;
+
+  function completeLogin(accountType: AccountType) {
+    switch (accountType) {
+      case "PersonalTrainer": {
+        navigate("/personal-trainer");
+        break;
+      }
+      case "Manager": {
+        navigate("/manager");
+        break;
+      }
+      case "Client": {
+        navigate("/client");
+        break;
+      }
+      default: {
+        console.error("ERROR: Could not find account type: " + accountType);
+        break;
+      }
+    }
+  }
+  useEffect(() => {
+    if (jwt != null) {
+      user = jwt_decode(jwt);
+      completeLogin(user.Role);
+    }
+  }, []);
 
   function validateForm() {
     return email.length > 0 && password.length > 0;
@@ -32,22 +61,10 @@ export function Login() {
           console.log(
             "JWT decoded: " + JSON.stringify(jwt_decode(response.jwt))
           );
-          var decoded: any = jwt_decode(response.jwt);
-          var accountType: string = decoded["Role"];
+          var user: UserDecoded = jwt_decode(response.jwt);
+          var accountType: AccountType = user.Role;
           console.log("AccountType: " + accountType);
-          switch (accountType) {
-            case "Manager":
-              navigate("/manager");
-              break;
-            case "PersonalTrainer":
-              navigate("/personal-trainer");
-              break;
-            case "Client":
-              navigate("/client");
-              break;
-            default:
-              console.log("ERROR: Could not find account type: " + accountType);
-          }
+          completeLogin(accountType);
         },
         (error) => {
           console.log(JSON.stringify(error));
@@ -77,7 +94,17 @@ export function Login() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Group>
-        <Button size="lg" type="submit" disabled={!validateForm()}>
+        <br />
+        <Button
+          variant="contained"
+          sx={{
+            boxShadow: 7,
+            borderRadius: 1,
+            mx: 2,
+          }}
+          type="submit"
+          disabled={!validateForm()}
+        >
           Login
         </Button>
       </Form>

@@ -1,8 +1,8 @@
 import { AppBar, Button, IconButton, Toolbar, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import { BrowserRouter, NavLink, Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-export function ManagerNavBar(props: any) {
+export function ClientNavBar(props: any) {
   const navigate = useNavigate();
 
   function logout() {
@@ -19,7 +19,7 @@ export function ManagerNavBar(props: any) {
           sx={{ mr: 2 }}
         ></IconButton>
         <Typography variant="h6" color="inherit" component="div">
-          {"Signed in as manager: " + props.name}
+          {"Signed in as client: " + props.name}
         </Typography>
         <Button
           color="secondary"
@@ -30,21 +30,9 @@ export function ManagerNavBar(props: any) {
             mx: 2,
           }}
           component={Link}
-          to="/manager"
+          to="/client"
         >
           Home
-        </Button>
-        <Button
-          color="secondary"
-          variant="contained"
-          sx={{
-            boxShadow: 7,
-            borderRadius: 1,
-          }}
-          component={Link}
-          to="create-trainer"
-        >
-          Create trainer
         </Button>
         <Button
           color="primary"

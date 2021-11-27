@@ -1,8 +1,14 @@
 import jwt_decode from "jwt-decode";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { baseUrl } from "../env";
-import { ManagerNavBar } from "../NavBars/ManagerNavBar";
+import {
+  AccountType,
+  baseUrl,
+  isAuthenticated,
+  UserDecoded,
+  Users,
+} from "../../env";
+import { ManagerNavBar } from "../../NavBars/ManagerNavBar";
 import {
   List,
   ListItem,
@@ -14,14 +20,19 @@ import {
   Grid,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import { isTemplateTail } from "typescript";
 
 export function HomeManager() {
   const jwt = localStorage.getItem("jwt");
   const navigate = useNavigate();
 
-  var user: any;
+  var user: UserDecoded;
   if (jwt != null) {
     user = jwt_decode(jwt);
+    const authenticated: boolean = isAuthenticated(user!.Role);
+    if (!authenticated) {
+      navigate("/");
+    }
   }
   const [allTrainers, setAllTrainers]: any = useState("");
 
@@ -36,12 +47,14 @@ export function HomeManager() {
     fetch(baseUrl + "api/Users", requestOptions)
       .then((res) => res.json())
       .then(
-        (response) => {
-          const result = response.filter((obj: { accountType: string }) => {
-            return obj.accountType == "PersonalTrainer";
-          });
+        (users: Users) => {
+          const personalTrainers: Users = users.filter(
+            (user: { accountType: AccountType }) => {
+              return user.accountType == "PersonalTrainer";
+            }
+          );
 
-          setAllTrainers(result);
+          setAllTrainers(personalTrainers);
         },
         (error) => {
           console.log(JSON.stringify(error));
@@ -79,11 +92,19 @@ export function HomeManager() {
   if (allTrainers != null && allTrainers != "") {
     return (
       <div className="HomeManager">
-        <ManagerNavBar name={user.Name} />
+        <ManagerNavBar name={user!.Name} />
         <h1>Home Manager</h1>
         <div>Here are all the trainers: </div>
-        <Box sx={{ width: "100%", maxWidth: 500, bgcolor: "background.paper" }}>
-          <List disablePadding>
+        <Box
+          // alignItems="center"
+          // display="flex"
+          width={500}
+          height={80}
+
+          // sx={{ width: "100%", maxWidth: 500, bgcolor: "red" }}
+        >
+          {/* disablePadding */}
+          <List>
             {allTrainers.map(function (item: any) {
               return (
                 <ListItem
@@ -96,12 +117,6 @@ export function HomeManager() {
                     mx: 5,
                     my: 2,
                   }}
-                  // bgcolor="primary.main"
-                  // secondaryAction={
-                  //   <IconButton edge="end" aria-label="edit">
-                  //     <EditIcon />
-                  //   </IconButton>
-                  // }
                 >
                   <ListItemText
                     primary={item.firstName + " " + item.lastName}
@@ -134,7 +149,7 @@ export function HomeManager() {
   } else {
     return (
       <div className="HomeManager">
-        <ManagerNavBar name={user.Name} />
+        <ManagerNavBar name={user!.Name} />
         <h1>Home Manager</h1>
         <div>Loading...</div>
       </div>

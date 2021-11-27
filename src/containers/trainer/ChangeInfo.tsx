@@ -1,45 +1,53 @@
 import { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import { ManagerNavBar } from "../NavBars/ManagerNavBar";
+import { ManagerNavBar } from "../../NavBars/ManagerNavBar";
 import jwt_decode from "jwt-decode";
 import { useNavigate, useParams } from "react-router-dom";
-import { baseUrl } from "../env";
+import { baseUrl, isAuthenticated, UserDecoded } from "../../env";
 
-export function EditTrainer() {
+export function ChangeInfo() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const jwt = localStorage.getItem("jwt");
   const navigate = useNavigate();
-  const { id } = useParams();
+  // const { id } = useParams();
+  let id: any = null;
+  var user: UserDecoded;
 
-  var user: any;
   if (jwt != null) {
     user = jwt_decode(jwt);
+    id = user.UserId;
+    const authenticated: boolean = isAuthenticated(user!.Role);
+    if (!authenticated) {
+      navigate("/");
+    }
   }
 
   useEffect(() => {
-    console.log("Edit ID: " + id);
+    if (id) {
+      console.log("Edit ID: " + id);
 
-    const requestOptions = {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${jwt}`,
-      },
-    };
-    fetch(baseUrl + "api/Users/" + id, requestOptions)
-      .then((res) => res.json())
-      .then(
-        (response) => {
-          setFirstName(response.firstName);
-          setLastName(response.lastName);
-          setEmail(response.email);
+      const requestOptions = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
         },
-        (error) => {
-          console.log(JSON.stringify(error));
-        }
-      );
+      };
+      fetch(baseUrl + "api/Users/" + id, requestOptions)
+        .then((res) => res.json())
+        .then(
+          (response) => {
+            setFirstName(response.firstName);
+            setLastName(response.lastName);
+            setEmail(response.email);
+          },
+          (error) => {
+            console.log(JSON.stringify(error));
+          }
+        );
+    }
   }, []);
 
   function handleSubmit(event: any) {
@@ -52,6 +60,9 @@ export function EditTrainer() {
         Authorization: `Bearer ${jwt}`,
       },
       body: JSON.stringify({
+        // userId: id,
+        // password: "aQ",
+        // personalTrainerId: id,
         firstName: firstName,
         lastName: lastName,
         email: email,
@@ -78,7 +89,7 @@ export function EditTrainer() {
 
   return (
     <div className="editTrainer">
-      <ManagerNavBar name={user.Name} />
+      <ManagerNavBar name={user!.Name} />
       <h1>Edit trainer</h1>
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="FirstName">

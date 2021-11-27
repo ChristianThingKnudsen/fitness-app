@@ -1,9 +1,9 @@
 // import Button from "react-bootstrap/Button";
 import { useState } from "react";
 import Form from "react-bootstrap/Form";
-import { baseUrl } from "../env";
+import { baseUrl, isAuthenticated, UserDecoded } from "../../env";
 import jwt_decode from "jwt-decode";
-import { ManagerNavBar } from "../NavBars/ManagerNavBar";
+import { ManagerNavBar } from "../../NavBars/ManagerNavBar";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 
@@ -15,9 +15,13 @@ export function CreateTrainer() {
   const jwt = localStorage.getItem("jwt");
   const navigate = useNavigate();
 
-  var user: any;
+  var user: UserDecoded;
   if (jwt != null) {
     user = jwt_decode(jwt);
+    const authenticated: boolean = isAuthenticated(user!.Role);
+    if (!authenticated) {
+      navigate("/");
+    }
   }
 
   function handleSubmit(event: any) {
@@ -74,7 +78,7 @@ export function CreateTrainer() {
 
   return (
     <div className="createTrainer">
-      <ManagerNavBar name={user.Name} />
+      <ManagerNavBar name={user!.Name} />
       <h1>Create trainer</h1>
       <Form onSubmit={handleSubmit}>
         <Form.Group controlId="FirstName">
