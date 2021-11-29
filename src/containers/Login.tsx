@@ -3,7 +3,7 @@ import { AccountType, baseUrl, UserDecoded } from "../env";
 import { useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import { Button } from "@mui/material";
-import "./Login.css";
+import "./Form.css";
 import jwt_decode from "jwt-decode";
 
 export function Login() {
@@ -81,27 +81,32 @@ export function Login() {
   }
 
   return (
-    <div className="Login">
+    <div className="form">
+      <h1>Login</h1>
       <Form onSubmit={handleSubmit}>
-        <Form.Group controlId="email">
-          <Form.Label>Email</Form.Label>
-          <Form.Control
-            size="lg"
-            autoFocus
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </Form.Group>
-        <Form.Group controlId="password">
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            size="lg"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </Form.Group>
+        <div>
+          <Form.Group controlId="email">
+            <Form.Label>Email</Form.Label>
+            <Form.Control
+              size="lg"
+              autoFocus
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </Form.Group>
+        </div>
+        <div>
+          <Form.Group controlId="password">
+            <Form.Label>Password</Form.Label>
+            <Form.Control
+              size="lg"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </Form.Group>
+        </div>
         <br />
         <Button
           variant="contained"

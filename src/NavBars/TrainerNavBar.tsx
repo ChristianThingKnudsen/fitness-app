@@ -42,7 +42,7 @@ export function TrainerNavBar(props: any) {
             borderRadius: 1,
           }}
           component={Link}
-          to="create-client"
+          to="/personal-trainer/create-client"
         >
           Create client
         </Button>
@@ -55,9 +55,22 @@ export function TrainerNavBar(props: any) {
             mx: 2,
           }}
           component={Link}
-          to="change-info"
+          to="/personal-trainer/change-info"
         >
           Change info
+        </Button>
+        <Button
+          color="secondary"
+          variant="contained"
+          sx={{
+            boxShadow: 7,
+            borderRadius: 1,
+            mx: 2,
+          }}
+          component={Link}
+          to="/personal-trainer/exercises"
+        >
+          Exercises
         </Button>
         <Button
           color="primary"

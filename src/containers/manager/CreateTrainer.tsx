@@ -6,6 +6,7 @@ import jwt_decode from "jwt-decode";
 import { ManagerNavBar } from "../../NavBars/ManagerNavBar";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
+import "../Form.css";
 
 export function CreateTrainer() {
   const [firstName, setFirstName] = useState("");
@@ -20,7 +21,7 @@ export function CreateTrainer() {
 
   if (jwt) {
     user = jwt_decode(jwt);
-    authenticated = isAuthenticated(user!.Role);
+    authenticated = isAuthenticated("Manager");
   } else {
     user = null;
   }
@@ -91,69 +92,73 @@ export function CreateTrainer() {
 
   if (jwt && user) {
     return (
-      <div className="createTrainer">
-        <ManagerNavBar name={user!.Name} />
-        <h1>Create trainer</h1>
-        <Form onSubmit={handleSubmit}>
-          <Form.Group controlId="FirstName">
-            <Form.Label>First name</Form.Label>
-            <Form.Control
-              size="lg"
-              autoFocus
-              type="name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-            />
-          </Form.Group>
-          <Form.Group controlId="LastName">
-            <Form.Label>Last name</Form.Label>
-            <Form.Control
-              size="lg"
-              autoFocus
-              type="name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-            />
-          </Form.Group>
-          <Form.Group controlId="Email">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              size="lg"
-              autoFocus
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </Form.Group>
-          <Form.Group controlId="Password">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              size="lg"
-              autoFocus
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </Form.Group>
-          {/* <Button size="lg" type="submit" disabled={!validateForm()}>
-            Submit
-          </Button> */}
-          <br />
+      <>
+        <div>
+          <ManagerNavBar name={user!.Name} />
+        </div>
+        <div className="form">
+          <h1>Create trainer</h1>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group controlId="FirstName">
+              <Form.Label>First name</Form.Label>
+              <Form.Control
+                size="lg"
+                autoFocus
+                type="name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="LastName">
+              <Form.Label>Last name</Form.Label>
+              <Form.Control
+                size="lg"
+                autoFocus
+                type="name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="Email">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                size="lg"
+                autoFocus
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="Password">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                size="lg"
+                autoFocus
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </Form.Group>
+            {/* <Button size="lg" type="submit" disabled={!validateForm()}>
+      Submit
+    </Button> */}
+            <br />
 
-          <Button
-            variant="contained"
-            type="submit"
-            disabled={!validateForm()}
-            sx={{
-              boxShadow: 7,
-              borderRadius: 1,
-              mx: 2,
-            }}
-          >
-            Submit
-          </Button>
-        </Form>
-      </div>
+            <Button
+              variant="contained"
+              type="submit"
+              disabled={!validateForm()}
+              sx={{
+                boxShadow: 7,
+                borderRadius: 1,
+                mx: 2,
+              }}
+            >
+              Submit
+            </Button>
+          </Form>
+        </div>
+      </>
     );
   } else {
     return (

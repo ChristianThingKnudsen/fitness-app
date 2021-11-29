@@ -32,7 +32,7 @@ export function HomeManager() {
 
   if (jwt) {
     user = jwt_decode(jwt);
-    authenticated = isAuthenticated(user!.Role);
+    authenticated = isAuthenticated("Manager");
   } else {
     user = null;
   }

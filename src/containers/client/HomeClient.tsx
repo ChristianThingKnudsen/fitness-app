@@ -21,7 +21,7 @@ export function HomeClient() {
 
   if (jwt) {
     user = jwt_decode(jwt);
-    authenticated = isAuthenticated(user!.Role);
+    authenticated = isAuthenticated("Client");
   } else {
     user = null;
   }

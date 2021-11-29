@@ -1,17 +1,24 @@
-import { Box, Button, List, ListItem, ListItemText } from "@mui/material";
-import jwt_decode from "jwt-decode";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { baseUrl, isAuthenticated, UserDecoded } from "../../env";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  baseUrl,
+  Exercise,
+  Exercises,
+  isAuthenticated,
+  UserDecoded,
+} from "../../env";
+import jwt_decode from "jwt-decode";
 import { TrainerNavBar } from "../../NavBars/TrainerNavBar";
+import { Box, Button, List, ListItem, ListItemText } from "@mui/material";
 
-export function HomeTrainer() {
+export function ExercisesPage() {
+  const [allExercises, setAllExercises]: any = useState("");
+
   const jwt = localStorage.getItem("jwt");
   const navigate = useNavigate();
 
   var user: UserDecoded | null;
   var authenticated: boolean;
-  const [allClients, setAllClients]: any = useState("");
 
   if (jwt) {
     user = jwt_decode(jwt);
@@ -38,15 +45,11 @@ export function HomeTrainer() {
         Authorization: `Bearer ${jwt}`,
       },
     };
-    fetch(baseUrl + "api/Users/Clients", requestOptions)
+    fetch(baseUrl + "api/Exercises", requestOptions)
       .then((res) => res.json())
       .then(
-        (response) => {
-          // const result = response.filter((obj: { accountType: string }) => {
-          //   return obj.accountType == "Client";
-          // });
-
-          setAllClients(response);
+        (exercises: Exercises) => {
+          setAllExercises(exercises);
         },
         (error) => {
           console.log(JSON.stringify(error));
@@ -54,8 +57,8 @@ export function HomeTrainer() {
       );
   }, []);
 
-  function deleteUser(uid: string) {
-    console.log("URL delete: " + baseUrl + "api/Users/" + uid);
+  function deleteExercise(uid: number) {
+    console.log("URL delete: " + baseUrl + "api/Exercises/" + uid);
 
     const requestOptions = {
       method: "DELETE",
@@ -64,13 +67,13 @@ export function HomeTrainer() {
         Authorization: `Bearer ${jwt}`,
       },
     };
-    fetch(baseUrl + "api/Users/" + uid, requestOptions).then(
+    fetch(baseUrl + "api/Exercises/" + uid, requestOptions).then(
       (response) => {
         console.log("Response delete: " + JSON.stringify(response));
-        const newList = allClients.filter((item: any) => {
-          return item.userId !== uid;
+        const newList = allExercises.filter((exercise: Exercise) => {
+          return exercise.exerciseId !== uid;
         });
-        setAllClients(newList);
+        setAllExercises(newList);
       },
       (error) => {
         console.log("Error delete: " + error);
@@ -78,12 +81,12 @@ export function HomeTrainer() {
     );
   }
 
-  if (allClients && jwt && user) {
+  if (allExercises && jwt && user) {
     return (
-      <div className="HomeTrainerr">
+      <div className="exercises">
         <TrainerNavBar name={user!.Name} />
-        <h1>Home Trainer</h1>
-        <div>Here are all your clients: </div>
+        <h1>Exercises</h1>
+        <div>Here are all the exercises: </div>
         <Box
           // alignItems="center"
           // display="flex"
@@ -93,11 +96,25 @@ export function HomeTrainer() {
           // sx={{ width: "100%", maxWidth: 500, bgcolor: "red" }}
         >
           {/* disablePadding */}
+          <br />
+          <Button
+            color="primary"
+            variant="contained"
+            sx={{
+              boxShadow: 7,
+              borderRadius: 1,
+              mx: 20,
+            }}
+            component={Link}
+            to="/personal-trainer/exercises/create"
+          >
+            Create exercise
+          </Button>
           <List>
-            {allClients.map(function (item: any) {
+            {allExercises.map(function (exercise: Exercise) {
               return (
                 <ListItem
-                  key={item.userId}
+                  key={exercise.exerciseId}
                   sx={{
                     bgcolor: "white",
                     boxShadow: 7,
@@ -107,13 +124,20 @@ export function HomeTrainer() {
                     my: 2,
                   }}
                 >
-                  <ListItemText
-                    primary={item.firstName + " " + item.lastName}
-                  />
-
+                  <ListItemText primary={exercise.name} />
                   <Button
                     variant="contained"
-                    onClick={() => deleteUser(item.userId)}
+                    component={Link}
+                    to={"/personal-trainer/exercises/" + exercise.exerciseId}
+                    sx={{
+                      mx: 2,
+                    }}
+                  >
+                    Show
+                  </Button>
+                  <Button
+                    variant="contained"
+                    onClick={() => deleteExercise(exercise.exerciseId)}
                   >
                     Delete
                   </Button>
@@ -126,9 +150,9 @@ export function HomeTrainer() {
     );
   } else {
     return (
-      <div className="HomeTrainer">
+      <div className="exercises">
         <TrainerNavBar name={"Loading..."} />
-        <h1>Home Trainer</h1>
+        <h1>Exxercises</h1>
         <div>Loading...</div>
       </div>
     );

@@ -1,28 +1,32 @@
-// import Button from "react-bootstrap/Button";
 import { useEffect, useState } from "react";
-import Form from "react-bootstrap/Form";
-import { baseUrl, isAuthenticated, UserDecoded } from "../../env";
+import { Form } from "react-bootstrap";
+import { ManagerNavBar } from "../NavBars/ManagerNavBar";
 import jwt_decode from "jwt-decode";
-import { ManagerNavBar } from "../../NavBars/ManagerNavBar";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { baseUrl, isAuthenticated, UserDecoded } from "../env";
+import { TrainerNavBar } from "../NavBars/TrainerNavBar";
+import "./Form.css";
 import { Button } from "@mui/material";
-import { TrainerNavBar } from "../../NavBars/TrainerNavBar";
-import "../Form.css";
+import { ClientNavBar } from "../NavBars/ClientNavBar";
+import { AnyMxRecord } from "dns";
 
-export function CreateClient() {
+export function ChangeInfo() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const jwt = localStorage.getItem("jwt");
   const navigate = useNavigate();
-
+  // const { id } = useParams();
+  let id: any = null;
   var user: UserDecoded | null;
   var authenticated: boolean;
+  var header: string;
 
   if (jwt) {
     user = jwt_decode(jwt);
-    authenticated = isAuthenticated("PersonalTrainer");
+    authenticated = isAuthenticated(user!.Role);
+    id = user!.UserId;
+    header = "Edit " + user!.Role;
   } else {
     user = null;
   }
@@ -37,44 +41,62 @@ export function CreateClient() {
       console.log("Not auth");
       navigate("/");
     }
-  });
+
+    if (id) {
+      console.log("Edit ID: " + id);
+
+      const requestOptions = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwt}`,
+        },
+      };
+      fetch(baseUrl + "api/Users/" + id, requestOptions)
+        .then((res) => res.json())
+        .then(
+          (response) => {
+            setFirstName(response.firstName);
+            setLastName(response.lastName);
+            setEmail(response.email);
+          },
+          (error) => {
+            console.log(JSON.stringify(error));
+          }
+        );
+    }
+  }, []);
 
   function handleSubmit(event: any) {
     event.preventDefault();
+    console.log("ID: " + id);
 
-    console.log(
-      "Submit:" +
-        firstName +
-        " " +
-        lastName +
-        " " +
-        email +
-        " " +
-        password +
-        " " +
-        jwt
-    );
     const requestOptions = {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${jwt}`,
       },
       body: JSON.stringify({
+        userId: id,
+        // password: "aQ",
+        // personalTrainerId: 0, //TODO Maybe change this
         firstName: firstName,
         lastName: lastName,
         email: email,
-        password: password,
-        accountType: "Client",
-        personalTrainerId: user?.UserId,
+        accountType: user!.Role,
       }),
     };
-    fetch(baseUrl + "api/Users", requestOptions)
+    fetch(baseUrl + "api/Users/" + id, requestOptions)
       .then((res) => res.json())
       .then(
         (response) => {
           console.log(JSON.stringify(response));
-          navigate("/personal-trainer");
+          user!.Role == "PersonalTrainer"
+            ? navigate("/personal-trainer")
+            : user!.Role == "Client"
+            ? navigate("/client")
+            : navigate("/");
         },
         (error) => {
           console.log(JSON.stringify(error));
@@ -84,22 +106,37 @@ export function CreateClient() {
   }
 
   function validateForm() {
-    return (
-      email.length > 0 &&
-      password.length > 0 &&
-      firstName.length > 0 &&
-      lastName.length > 0
-    );
+    return email.length > 0 && firstName.length > 0 && lastName.length > 0;
+  }
+
+  function NavBar(props: any) {
+    if (props.role == "Client") {
+      return (
+        <div>
+          <ClientNavBar name={user!.Name} />
+        </div>
+      );
+    } else if (props.role == "PersonalTrainer") {
+      return (
+        <div>
+          <TrainerNavBar name={user!.Name} />
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <ManagerNavBar name={user!.Name} />
+        </div>
+      );
+    }
   }
 
   if (jwt && user) {
     return (
       <>
-        <div>
-          <TrainerNavBar name={user!.Name} />
-        </div>
+        <NavBar role={user!.Role} />
         <div className="form">
-          <h1>Create Client</h1>
+          <h1>Edit trainer</h1>
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="FirstName">
               <Form.Label>First name</Form.Label>
@@ -131,30 +168,15 @@ export function CreateClient() {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </Form.Group>
-            <Form.Group controlId="Password">
-              <Form.Label>Password</Form.Label>
-              <Form.Control
-                size="lg"
-                autoFocus
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </Form.Group>
-            {/* <Button size="lg" type="submit" disabled={!validateForm()}>
-      Submit
-    </Button> */}
             <br />
-
             <Button
               variant="contained"
-              type="submit"
-              disabled={!validateForm()}
               sx={{
                 boxShadow: 7,
                 borderRadius: 1,
-                mx: 2,
               }}
+              type="submit"
+              disabled={!validateForm()}
             >
               Submit
             </Button>
@@ -164,9 +186,9 @@ export function CreateClient() {
     );
   } else {
     return (
-      <div className="createClient">
+      <div className="changeInfo">
         <TrainerNavBar name={"Loading..."} />
-        <h1>Create client</h1>
+        <h1>Change info</h1>
         <div>Loading...</div>
       </div>
     );

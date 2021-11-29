@@ -1,0 +1,100 @@
+@media all and (min-width: 480px) {
+  .form {
+    background: lightskyblue;
+    padding: 20px 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+      "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+      "Helvetica Neue", sans-serif;
+    max-width: 600px;
+    margin: 0 auto;
+    border-radius: 20px;
+    -ms-transform: translateY(10%);
+    transform: translateY(10%);
+  }
+
+  .form Form {
+    margin: 0 auto;
+    max-width: 320px;
+  }
+
+  .form h1 {
+    font-weight: 100;
+    color: black;
+    text-align: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgb(79, 98, 148);
+  }
+
+  .form p {
+    color: #bf1650;
+  }
+
+  p::before {
+    display: inline;
+    content: "⚠ ";
+  }
+
+  .form input {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid black;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+
+  .form label {
+    line-height: 2;
+    text-align: left;
+    display: block;
+    margin-bottom: 13px;
+    margin-top: 20px;
+    color: black;
+    font-size: 14px;
+    font-weight: 200;
+  }
+
+  .form input[type="submit"] {
+    background: #ec5990;
+    color: black;
+    text-transform: uppercase;
+    border: none;
+    margin-top: 40px;
+    padding: 20px;
+    font-size: 16px;
+    font-weight: 100;
+    letter-spacing: 10px;
+  }
+
+  .form input[type="submit"]:hover {
+    background: #bf1650;
+  }
+
+  .form input[type="button"]:active,
+  .form input[type="submit"]:active {
+    transition: 0.3s all;
+    transform: translateY(3px);
+    border: 1px solid transparent;
+    opacity: 0.8;
+  }
+
+  .form input:disabled {
+    opacity: 0.4;
+  }
+
+  .form input[type="button"]:hover {
+    transition: 0.3s all;
+  }
+
+  .form input[type="button"],
+  .form input[type="submit"] {
+    -webkit-appearance: none;
+  }
+
+  .form Button {
+    margin: 0 auto;
+    display: block;
+  }
+}

@@ -35,6 +35,19 @@ export function ClientNavBar(props: any) {
           Home
         </Button>
         <Button
+          color="secondary"
+          variant="contained"
+          sx={{
+            boxShadow: 7,
+            borderRadius: 1,
+            mx: 2,
+          }}
+          component={Link}
+          to="/client/change-info"
+        >
+          Change info
+        </Button>
+        <Button
           color="primary"
           variant="contained"
           sx={{
