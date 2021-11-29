@@ -10,8 +10,16 @@ export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const jwt = localStorage.getItem("jwt");
+  const jwt: any = localStorage.getItem("jwt");
+  console.log("JWT:");
+  console.log(jwt);
   var user: UserDecoded;
+  console.log(localStorage.hasOwnProperty("jwt"));
+  if (localStorage.hasOwnProperty("jwt")) {
+    console.log("Trying to decode");
+    console.log(jwt);
+    user = jwt_decode(jwt);
+  }
 
   function completeLogin(accountType: AccountType) {
     switch (accountType) {
@@ -34,11 +42,11 @@ export function Login() {
     }
   }
   useEffect(() => {
-    if (jwt != null) {
-      user = jwt_decode(jwt);
+    if (localStorage.hasOwnProperty("jwt")) {
+      console.log("Completeting login...");
       completeLogin(user.Role);
     }
-  }, []);
+  });
 
   function validateForm() {
     return email.length > 0 && password.length > 0;
