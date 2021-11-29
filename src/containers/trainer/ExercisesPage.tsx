@@ -10,6 +10,7 @@ import {
 import jwt_decode from "jwt-decode";
 import { TrainerNavBar } from "../../NavBars/TrainerNavBar";
 import { Box, Button, List, ListItem, ListItemText } from "@mui/material";
+import "../List.css";
 
 export function ExercisesPage() {
   const [allExercises, setAllExercises]: any = useState("");
@@ -83,34 +84,36 @@ export function ExercisesPage() {
 
   if (allExercises && jwt && user) {
     return (
-      <div className="exercises">
-        <TrainerNavBar name={user!.Name} />
-        <h1>Exercises</h1>
-        <div>Here are all the exercises: </div>
-        <Box
-          // alignItems="center"
-          // display="flex"
-          width={500}
-          height={80}
-
-          // sx={{ width: "100%", maxWidth: 500, bgcolor: "red" }}
-        >
-          {/* disablePadding */}
-          <br />
+      <>
+        <div>
+          <TrainerNavBar name={user!.Name} />
+        </div>
+        <div className="list">
+          <h1>Exercises</h1>
+          <h2>Here are all the exercises </h2>
           <Button
             color="primary"
             variant="contained"
             sx={{
               boxShadow: 7,
               borderRadius: 1,
-              mx: 20,
+              mx: 5,
             }}
             component={Link}
             to="/personal-trainer/exercises/create"
           >
             Create exercise
           </Button>
-          <List>
+          <List
+            sx={{
+              bgcolor: "white",
+              boxShadow: 7,
+              borderRadius: 4,
+              p: 2,
+              my: 2,
+            }}
+            style={{ maxHeight: "1000px", overflow: "auto" }}
+          >
             {allExercises.map(function (exercise: Exercise) {
               return (
                 <ListItem
@@ -120,7 +123,7 @@ export function ExercisesPage() {
                     boxShadow: 7,
                     borderRadius: 4,
                     p: 2,
-                    mx: 5,
+                    maxWidth: "800px",
                     my: 2,
                   }}
                 >
@@ -145,14 +148,14 @@ export function ExercisesPage() {
               );
             })}
           </List>
-        </Box>
-      </div>
+        </div>
+      </>
     );
   } else {
     return (
       <div className="exercises">
         <TrainerNavBar name={"Loading..."} />
-        <h1>Exxercises</h1>
+        <h1>Exercises</h1>
         <div>Loading...</div>
       </div>
     );

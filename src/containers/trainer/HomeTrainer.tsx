@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { baseUrl, isAuthenticated, UserDecoded } from "../../env";
 import { TrainerNavBar } from "../../NavBars/TrainerNavBar";
+import "../List.css";
 
 export function HomeTrainer() {
   const jwt = localStorage.getItem("jwt");
@@ -80,20 +81,24 @@ export function HomeTrainer() {
 
   if (allClients && jwt && user) {
     return (
-      <div className="HomeTrainerr">
-        <TrainerNavBar name={user!.Name} />
-        <h1>Home Trainer</h1>
-        <div>Here are all your clients: </div>
-        <Box
-          // alignItems="center"
-          // display="flex"
-          width={500}
-          height={80}
-
-          // sx={{ width: "100%", maxWidth: 500, bgcolor: "red" }}
-        >
+      <>
+        <div>
+          <TrainerNavBar name={user!.Name} />
+        </div>
+        <div className="list">
+          <h1>Home Trainer</h1>
+          <h2>Here are all your clients</h2>
           {/* disablePadding */}
-          <List>
+          <List
+            sx={{
+              bgcolor: "white",
+              boxShadow: 7,
+              borderRadius: 4,
+              p: 2,
+              my: 2,
+            }}
+            style={{ maxHeight: "1000px", overflow: "auto" }}
+          >
             {allClients.map(function (item: any) {
               return (
                 <ListItem
@@ -103,7 +108,7 @@ export function HomeTrainer() {
                     boxShadow: 7,
                     borderRadius: 4,
                     p: 2,
-                    mx: 5,
+                    maxWidth: "800px",
                     my: 2,
                   }}
                 >
@@ -121,8 +126,8 @@ export function HomeTrainer() {
               );
             })}
           </List>
-        </Box>
-      </div>
+        </div>
+      </>
     );
   } else {
     return (

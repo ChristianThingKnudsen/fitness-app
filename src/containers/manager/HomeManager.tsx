@@ -21,6 +21,7 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { isTemplateTail } from "typescript";
+import "../List.css";
 
 export function HomeManager() {
   const jwt = localStorage.getItem("jwt");
@@ -96,26 +97,26 @@ export function HomeManager() {
       }
     );
   }
-  function editUser(userId: string) {
-    navigate("/manager/edit-trainer/" + userId);
-  }
 
   if (allTrainers != null && allTrainers != "" && jwt && user) {
     return (
-      <div className="HomeManager">
-        <ManagerNavBar name={user!.Name} />
-        <h1>Home Manager</h1>
-        <div>Here are all the trainers: </div>
-        <Box
-          // alignItems="center"
-          // display="flex"
-          width={500}
-          height={80}
-
-          // sx={{ width: "100%", maxWidth: 500, bgcolor: "red" }}
-        >
-          {/* disablePadding */}
-          <List>
+      <>
+        <div>
+          <ManagerNavBar name={user!.Name} />
+        </div>
+        <div className="list">
+          <h1>Home Manager</h1>
+          <h2> All trainers</h2>
+          <List
+            sx={{
+              bgcolor: "white",
+              boxShadow: 7,
+              borderRadius: 4,
+              p: 2,
+              my: 2,
+            }}
+            style={{ maxHeight: "1000px", overflow: "auto" }}
+          >
             {allTrainers.map(function (item: any) {
               return (
                 <ListItem
@@ -125,7 +126,7 @@ export function HomeManager() {
                     boxShadow: 7,
                     borderRadius: 4,
                     p: 2,
-                    mx: 5,
+                    maxWidth: "800px",
                     my: 2,
                   }}
                 >
@@ -143,8 +144,8 @@ export function HomeManager() {
               );
             })}
           </List>
-        </Box>
-      </div>
+        </div>
+      </>
     );
   } else {
     return (

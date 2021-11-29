@@ -1,31 +1,28 @@
 @media all and (min-width: 480px) {
-  .form {
-    background: lightskyblue;
+  .list {
+    background: white;
     padding: 20px 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
       "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
       "Helvetica Neue", sans-serif;
-    max-width: 600px;
     margin: 0 auto;
     border-radius: 20px;
-    -ms-transform: translateY(10%);
-    transform: translateY(10%);
   }
 
-  .form Form {
-    margin: 0 auto;
-    max-width: 320px;
-  }
-
-  .form h1 {
+  .list h1 {
     font-weight: 100;
     color: black;
     text-align: center;
     padding-bottom: 10px;
     border-bottom: 1px solid rgb(79, 98, 148);
   }
+  .list h2 {
+    color: black;
+    text-align: center;
+    padding-bottom: 10px;
+  }
 
-  .form p {
+  .list p {
     color: #bf1650;
   }
 
@@ -34,7 +31,7 @@
     content: "⚠ ";
   }
 
-  .form input {
+  .list input {
     display: block;
     box-sizing: border-box;
     width: 100%;
@@ -45,7 +42,7 @@
     font-size: 14px;
   }
 
-  .form label {
+  .list label {
     line-height: 2;
     text-align: left;
     display: block;
@@ -56,7 +53,7 @@
     font-weight: 200;
   }
 
-  .form input[type="submit"] {
+  .list input[type="submit"] {
     background: #ec5990;
     color: black;
     text-transform: uppercase;
@@ -68,55 +65,33 @@
     letter-spacing: 10px;
   }
 
-  .form input[type="submit"]:hover {
+  .list input[type="submit"]:hover {
     background: #bf1650;
   }
 
-  .form input[type="button"]:active,
-  .form input[type="submit"]:active {
+  .list input[type="button"]:active,
+  .list input[type="submit"]:active {
     transition: 0.3s all;
     transform: translateY(3px);
     border: 1px solid transparent;
     opacity: 0.8;
   }
 
-  .form input:disabled {
+  .list input:disabled {
     opacity: 0.4;
   }
 
-  .form input[type="button"]:hover {
+  .list input[type="button"]:hover {
     transition: 0.3s all;
   }
 
-  .form input[type="button"],
-  .form input[type="submit"] {
+  .list input[type="button"],
+  .list input[type="submit"] {
     -webkit-appearance: none;
   }
 
-  .form Button {
+  .list Button {
     margin: 0 auto;
     display: block;
-  }
-
-  .btn-group button {
-    float: left;
-    padding-right: 20px;
-  }
-  .btn-group:after {
-    content: "";
-    clear: both;
-    display: table;
-  }
-
-  .btn-group {
-    width: 100%;
-    float: left;
-    text-align: center;
-  }
-  #btn1 {
-    float: left;
-  }
-  #btn2 {
-    float: right;
   }
 }
