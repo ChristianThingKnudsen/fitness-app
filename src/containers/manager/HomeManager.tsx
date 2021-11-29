@@ -26,17 +26,28 @@ export function HomeManager() {
   const jwt = localStorage.getItem("jwt");
   const navigate = useNavigate();
 
-  var user: UserDecoded;
-  if (jwt != null) {
-    user = jwt_decode(jwt);
-    const authenticated: boolean = isAuthenticated(user!.Role);
-    if (!authenticated) {
-      navigate("/");
-    }
-  }
+  var user: UserDecoded | null;
+  var authenticated: boolean;
   const [allTrainers, setAllTrainers]: any = useState("");
 
+  if (jwt) {
+    user = jwt_decode(jwt);
+    authenticated = isAuthenticated(user!.Role);
+  } else {
+    user = null;
+  }
+
   useEffect(() => {
+    if (jwt) {
+      if (!authenticated) {
+        console.log("Not auth");
+        return navigate("/");
+      }
+    } else {
+      console.log("Not jwt");
+      return navigate("/");
+    }
+
     const requestOptions = {
       method: "GET",
       headers: {
@@ -89,7 +100,7 @@ export function HomeManager() {
     navigate("/manager/edit-trainer/" + userId);
   }
 
-  if (allTrainers != null && allTrainers != "") {
+  if (allTrainers != null && allTrainers != "" && jwt && user) {
     return (
       <div className="HomeManager">
         <ManagerNavBar name={user!.Name} />
@@ -128,17 +139,6 @@ export function HomeManager() {
                   >
                     Delete
                   </Button>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      boxShadow: 7,
-                      borderRadius: 1,
-                      mx: 2,
-                    }}
-                    onClick={() => editUser(item.userId)}
-                  >
-                    Edit
-                  </Button>
                 </ListItem>
               );
             })}
@@ -149,7 +149,7 @@ export function HomeManager() {
   } else {
     return (
       <div className="HomeManager">
-        <ManagerNavBar name={user!.Name} />
+        <ManagerNavBar name={"Loading..."} />
         <h1>Home Manager</h1>
         <div>Loading...</div>
       </div>

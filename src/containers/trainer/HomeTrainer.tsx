@@ -9,18 +9,28 @@ export function HomeTrainer() {
   const jwt = localStorage.getItem("jwt");
   const navigate = useNavigate();
 
-  var user: UserDecoded;
-  if (jwt != null) {
-    user = jwt_decode(jwt);
-    const authenticated: boolean = isAuthenticated(user!.Role);
-    if (!authenticated) {
-      navigate("/");
-    }
-  }
-
+  var user: UserDecoded | null;
+  var authenticated: boolean;
   const [allClients, setAllClients]: any = useState("");
 
+  if (jwt) {
+    user = jwt_decode(jwt);
+    authenticated = isAuthenticated(user!.Role);
+  } else {
+    user = null;
+  }
+
   useEffect(() => {
+    if (jwt) {
+      if (!authenticated) {
+        console.log("auth");
+        return navigate("/");
+      }
+    } else {
+      console.log("Not auth");
+      return navigate("/");
+    }
+
     const requestOptions = {
       method: "GET",
       headers: {
@@ -71,7 +81,7 @@ export function HomeTrainer() {
     return "lol";
   }
 
-  if (allClients != null && allClients != "") {
+  if (allClients && jwt && user) {
     return (
       <div className="HomeTrainerr">
         <TrainerNavBar name={user!.Name} />
@@ -131,7 +141,7 @@ export function HomeTrainer() {
   } else {
     return (
       <div className="HomeTrainer">
-        <TrainerNavBar name={user!.Name} />
+        <TrainerNavBar name={"Loading..."} />
         <h1>Home Trainer</h1>
         <div>Loading...</div>
       </div>

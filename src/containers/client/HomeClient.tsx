@@ -15,21 +15,32 @@ export function HomeClient() {
   const jwt = localStorage.getItem("jwt");
   const navigate = useNavigate();
 
-  var user: UserDecoded;
-  if (jwt != null) {
-    user = jwt_decode(jwt);
-    const authenticated: boolean = isAuthenticated(user!.Role);
-    if (!authenticated) {
-      navigate("/");
-    }
-  }
   const [allWorkouts, setAllWorkouts]: any = useState("");
+  var user: UserDecoded | null;
+  var authenticated: boolean;
+
+  if (jwt) {
+    user = jwt_decode(jwt);
+    authenticated = isAuthenticated(user!.Role);
+  } else {
+    user = null;
+  }
 
   function show(id: number) {
     // TODO: Add some code here for  showing workout program.
   }
 
   useEffect(() => {
+    if (jwt) {
+      if (!authenticated) {
+        console.log("auth");
+        return navigate("/");
+      }
+    } else {
+      console.log("Not auth");
+      return navigate("/");
+    }
+    
     const requestOptions = {
       method: "GET",
       headers: {
@@ -52,7 +63,7 @@ export function HomeClient() {
       );
   }, []);
 
-  if (allWorkouts != null && allWorkouts != "") {
+  if (allWorkouts && jwt && user) {
     return (
       <div className="HomeClient">
         <ClientNavBar name={user!.Name} />
@@ -103,7 +114,7 @@ export function HomeClient() {
   } else {
     return (
       <div className="Clientanager">
-        <ClientNavBar name={user!.Name} />
+        <ClientNavBar name={"Loading..."} />
         <h1>Home Client</h1>
         <div>Loading...</div>
       </div>
