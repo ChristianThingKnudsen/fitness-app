@@ -104,50 +104,65 @@ export function ExercisesPage() {
           >
             Create exercise
           </Button>
-          <List
-            sx={{
-              bgcolor: "white",
-              boxShadow: 7,
-              borderRadius: 4,
-              p: 2,
-              my: 2,
-            }}
-            style={{ maxHeight: "1000px", overflow: "auto" }}
-          >
-            {allExercises.map(function (exercise: Exercise) {
-              return (
-                <ListItem
-                  key={exercise.exerciseId}
-                  sx={{
-                    bgcolor: "white",
-                    boxShadow: 7,
-                    borderRadius: 4,
-                    p: 2,
-                    maxWidth: "800px",
-                    my: 2,
-                  }}
-                >
-                  <ListItemText primary={exercise.name} />
-                  <Button
-                    variant="contained"
-                    component={Link}
-                    to={"/personal-trainer/exercises/" + exercise.exerciseId}
-                    sx={{
-                      mx: 2,
-                    }}
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <List
+              sx={{
+                bgcolor: "white",
+                boxShadow: 7,
+                borderRadius: 4,
+                p: 2,
+                my: 2,
+                width: "75%",
+                height: "50%",
+              }}
+              style={{
+                maxHeight: "450px",
+                overflow: "auto",
+              }}
+            >
+              {allExercises.map(function (exercise: Exercise) {
+                return (
+                  <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
                   >
-                    Show
-                  </Button>
-                  <Button
-                    variant="contained"
-                    onClick={() => deleteExercise(exercise.exerciseId)}
-                  >
-                    Delete
-                  </Button>
-                </ListItem>
-              );
-            })}
-          </List>
+                    <ListItem
+                      key={exercise.exerciseId}
+                      sx={{
+                        bgcolor: "white",
+                        boxShadow: 7,
+                        borderRadius: 4,
+                        p: 2,
+                        maxWidth: "800px",
+                        my: 2,
+                      }}
+                    >
+                      <ListItemText primary={exercise.name} />
+                      <Button
+                        variant="contained"
+                        component={Link}
+                        to={
+                          "/personal-trainer/exercises/" + exercise.exerciseId
+                        }
+                        sx={{
+                          mx: 2,
+                        }}
+                      >
+                        Show
+                      </Button>
+                      <Button
+                        variant="contained"
+                        onClick={() => deleteExercise(exercise.exerciseId)}
+                      >
+                        Delete
+                      </Button>
+                    </ListItem>
+                  </Box>
+                );
+              })}
+            </List>
+          </Box>
         </div>
       </>
     );

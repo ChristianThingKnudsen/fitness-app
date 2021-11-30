@@ -40,7 +40,7 @@ export function HomeClient() {
       console.log("Not auth");
       return navigate("/");
     }
-    
+
     const requestOptions = {
       method: "GET",
       headers: {
@@ -65,51 +65,67 @@ export function HomeClient() {
 
   if (allWorkouts && jwt && user) {
     return (
-      <div className="HomeClient">
-        <ClientNavBar name={user!.Name} />
-        <h1>Home Manager</h1>
-        <div>Here are all your workouts: </div>
-        <Box
-          // alignItems="center"
-          // display="flex"
-          width={500}
-          height={80}
-
-          // sx={{ width: "100%", maxWidth: 500, bgcolor: "red" }}
-        >
-          {/* disablePadding */}
-          <List>
-            {allWorkouts.map(function (workoutProgram: WorkoutProgram) {
-              return (
-                <ListItem
-                  key={workoutProgram.workoutProgramId}
-                  sx={{
-                    bgcolor: "white",
-                    boxShadow: 7,
-                    borderRadius: 4,
-                    p: 2,
-                    mx: 5,
-                    my: 2,
-                  }}
-                >
-                  <ListItemText primary={workoutProgram.name} />
-                  <Button
-                    variant="contained"
-                    sx={{
-                      boxShadow: 7,
-                      borderRadius: 1,
-                      mx: 2,
-                    }}
-                    onClick={() => show(workoutProgram.workoutProgramId)}
+      <>
+        <div>
+          <ClientNavBar name={user!.Name} />
+        </div>
+        <div className="list">
+          <h1>Home client</h1>
+          <h2>Lll your workouts: </h2>
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <List
+              sx={{
+                bgcolor: "white",
+                boxShadow: 7,
+                borderRadius: 4,
+                p: 2,
+                my: 2,
+                width: "75%",
+                height: "50%",
+              }}
+              style={{
+                maxHeight: "450px",
+                overflow: "auto",
+              }}
+            >
+              {allWorkouts.map(function (workoutProgram: WorkoutProgram) {
+                return (
+                  <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
                   >
-                    Show
-                  </Button>
-                </ListItem>
-              );
-            })}
-          </List>
-        </Box>
-      </div>
+                    <ListItem
+                      key={workoutProgram.workoutProgramId}
+                      sx={{
+                        bgcolor: "white",
+                        boxShadow: 7,
+                        borderRadius: 4,
+                        p: 2,
+                        mx: 5,
+                        my: 2,
+                      }}
+                    >
+                      <ListItemText primary={workoutProgram.name} />
+                      <Button
+                        variant="contained"
+                        sx={{
+                          boxShadow: 7,
+                          borderRadius: 1,
+                          mx: 2,
+                        }}
+                        onClick={() => show(workoutProgram.workoutProgramId)}
+                      >
+                        Show
+                      </Button>
+                    </ListItem>
+                  </Box>
+                );
+              })}
+            </List>
+          </Box>
+        </div>
+      </>
     );
   } else {
     return (

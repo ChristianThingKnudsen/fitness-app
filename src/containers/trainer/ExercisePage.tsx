@@ -62,7 +62,7 @@ export function ExercisePage() {
             setSets(exercise.sets.toString());
             setRepetitions(exercise.repetitions.toString());
             setTime(exercise.time);
-            setWorkoutProgramId(exercise.workoutProgramId.toString());
+            setWorkoutProgramId(exercise.workoutProgramId?.toString());
             setPersonalTrainerId(exercise.personalTrainerId.toString());
           },
           (error) => {

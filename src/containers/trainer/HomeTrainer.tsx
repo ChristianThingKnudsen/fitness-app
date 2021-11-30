@@ -89,43 +89,56 @@ export function HomeTrainer() {
           <h1>Home Trainer</h1>
           <h2>Here are all your clients</h2>
           {/* disablePadding */}
-          <List
-            sx={{
-              bgcolor: "white",
-              boxShadow: 7,
-              borderRadius: 4,
-              p: 2,
-              my: 2,
-            }}
-            style={{ maxHeight: "1000px", overflow: "auto" }}
-          >
-            {allClients.map(function (item: any) {
-              return (
-                <ListItem
-                  key={item.userId}
-                  sx={{
-                    bgcolor: "white",
-                    boxShadow: 7,
-                    borderRadius: 4,
-                    p: 2,
-                    maxWidth: "800px",
-                    my: 2,
-                  }}
-                >
-                  <ListItemText
-                    primary={item.firstName + " " + item.lastName}
-                  />
-
-                  <Button
-                    variant="contained"
-                    onClick={() => deleteUser(item.userId)}
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <List
+              sx={{
+                bgcolor: "white",
+                boxShadow: 7,
+                borderRadius: 4,
+                p: 2,
+                my: 2,
+                width: "75%",
+                height: "50%",
+              }}
+              style={{
+                maxHeight: "450px",
+                overflow: "auto",
+              }}
+            >
+              {allClients.map(function (item: any) {
+                return (
+                  <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
                   >
-                    Delete
-                  </Button>
-                </ListItem>
-              );
-            })}
-          </List>
+                    <ListItem
+                      key={item.userId}
+                      sx={{
+                        bgcolor: "white",
+                        boxShadow: 7,
+                        borderRadius: 4,
+                        p: 2,
+                        maxWidth: "800px",
+                        my: 2,
+                      }}
+                    >
+                      <ListItemText
+                        primary={item.firstName + " " + item.lastName}
+                      />
+
+                      <Button
+                        variant="contained"
+                        onClick={() => deleteUser(item.userId)}
+                      >
+                        Delete
+                      </Button>
+                    </ListItem>
+                  </Box>
+                );
+              })}
+            </List>
+          </Box>
         </div>
       </>
     );
