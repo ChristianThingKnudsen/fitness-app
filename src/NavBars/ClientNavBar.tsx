@@ -12,13 +12,7 @@ export function ClientNavBar(props: any) {
   return (
     <AppBar position="static">
       <Toolbar variant="dense">
-        <IconButton
-          edge="start"
-          color="inherit"
-          aria-label="menu"
-          sx={{ mr: 2 }}
-        ></IconButton>
-        <Typography variant="h6" color="inherit" component="div">
+        <Typography variant="h6" color="inherit" component="div" sx={{ mr: 3 }}>
           {"Signed in as client: " + props.name}
         </Typography>
         <Button

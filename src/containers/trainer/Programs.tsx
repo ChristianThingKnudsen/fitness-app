@@ -6,14 +6,16 @@ import {
   Exercises,
   isAuthenticated,
   UserDecoded,
+  WorkoutProgram,
+  WorkoutPrograms,
 } from "../../env";
 import jwt_decode from "jwt-decode";
 import { TrainerNavBar } from "../../NavBars/TrainerNavBar";
 import { Box, Button, List, ListItem, ListItemText } from "@mui/material";
 import "../List.css";
 
-export function ExercisesPage() {
-  const [allExercises, setAllExercises]: any = useState("");
+export function Programs() {
+  const [allPrograms, setAllPrograms]: any = useState("");
 
   const jwt = localStorage.getItem("jwt");
   const navigate = useNavigate();
@@ -46,11 +48,11 @@ export function ExercisesPage() {
         Authorization: `Bearer ${jwt}`,
       },
     };
-    fetch(baseUrl + "api/Exercises", requestOptions)
+    fetch(baseUrl + "api/WorkoutPrograms", requestOptions)
       .then((res) => res.json())
       .then(
-        (exercises: Exercises) => {
-          setAllExercises(exercises);
+        (programs: WorkoutPrograms) => {
+          setAllPrograms(programs);
         },
         (error) => {
           console.log(JSON.stringify(error));
@@ -58,8 +60,8 @@ export function ExercisesPage() {
       );
   }, []);
 
-  function deleteExercise(uid: number) {
-    console.log("URL delete: " + baseUrl + "api/Exercises/" + uid);
+  function deleteProgram(uid: number) {
+    console.log("URL delete: " + baseUrl + "api/WorkoutPrograms/" + uid);
 
     const requestOptions = {
       method: "DELETE",
@@ -68,29 +70,29 @@ export function ExercisesPage() {
         Authorization: `Bearer ${jwt}`,
       },
     };
-    fetch(baseUrl + "api/Exercises/" + uid, requestOptions).then(
+    fetch(baseUrl + "api/WorkoutPrograms/" + uid, requestOptions).then(
       (response) => {
         console.log("Response delete: " + JSON.stringify(response));
-        const newList = allExercises.filter((exercise: Exercise) => {
-          return exercise.exerciseId !== uid;
+        const newList = allPrograms.filter((program: WorkoutProgram) => {
+          return program.workoutProgramId !== uid;
         });
-        setAllExercises(newList);
+        setAllPrograms(newList);
       },
       (error) => {
-        console.log("Error delete: " + error);
+        console.log("ERROR: " + error);
       }
     );
   }
 
-  if (allExercises && jwt && user) {
+  if (allPrograms && jwt && user) {
     return (
       <>
         <div>
           <TrainerNavBar name={user!.Name} />
         </div>
         <div className="list">
-          <h1>Exercises</h1>
-          <h2>Here are all the exercises </h2>
+          <h1>Programs</h1>
+          <h2>Here are all your programs </h2>
           <Box display="flex" justifyContent="center" alignItems="center">
             <Button
               color="primary"
@@ -101,9 +103,9 @@ export function ExercisesPage() {
                 mx: 5,
               }}
               component={Link}
-              to="/personal-trainer/exercises/create"
+              to="/personal-trainer/workout-programs/create"
             >
-              Create exercise
+              Create program
             </Button>
           </Box>
           <Box display="flex" justifyContent="center" alignItems="center">
@@ -122,16 +124,16 @@ export function ExercisesPage() {
                 overflow: "auto",
               }}
             >
-              {allExercises.map(function (exercise: Exercise) {
+              {allPrograms.map(function (program: WorkoutProgram) {
                 return (
                   <Box
-                    key={exercise.exerciseId}
+                    key={program.workoutProgramId}
                     display="flex"
                     justifyContent="center"
                     alignItems="center"
                   >
                     <ListItem
-                      key={exercise.exerciseId}
+                      key={program.workoutProgramId}
                       sx={{
                         bgcolor: "white",
                         boxShadow: 7,
@@ -141,12 +143,13 @@ export function ExercisesPage() {
                         my: 2,
                       }}
                     >
-                      <ListItemText primary={exercise.name} />
+                      <ListItemText primary={program.name} />
                       <Button
                         variant="contained"
                         component={Link}
                         to={
-                          "/personal-trainer/exercises/" + exercise.exerciseId
+                          "/personal-trainer/workout-programs/" +
+                          program.workoutProgramId
                         }
                         sx={{
                           mx: 2,
@@ -156,7 +159,7 @@ export function ExercisesPage() {
                       </Button>
                       <Button
                         variant="contained"
-                        onClick={() => deleteExercise(exercise.exerciseId)}
+                        onClick={() => deleteProgram(program.workoutProgramId)}
                       >
                         Delete
                       </Button>
@@ -171,9 +174,9 @@ export function ExercisesPage() {
     );
   } else {
     return (
-      <div className="exercises">
+      <div className="programs">
         <TrainerNavBar name={"Loading..."} />
-        <h1>Exercises</h1>
+        <h1>Workout programs</h1>
         <div>Loading...</div>
       </div>
     );

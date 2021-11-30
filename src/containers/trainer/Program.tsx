@@ -1,20 +1,28 @@
 import { Button } from "@mui/material";
 import { Form } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
-import { baseUrl, Exercise, isAuthenticated, UserDecoded } from "../../env";
+import {
+  baseUrl,
+  Exercise,
+  Exercises,
+  isAuthenticated,
+  UserDecoded,
+  WorkoutProgram,
+} from "../../env";
 import jwt_decode from "jwt-decode";
 import { useEffect, useState } from "react";
 import { TrainerNavBar } from "../../NavBars/TrainerNavBar";
+import CreatableSelect from "react-select/creatable";
+import { OnChangeValue } from "react-select";
 
-export function ExercisePage() {
-  const [exerciseId, setExerciseId] = useState("");
-  const [eName, setEName] = useState("");
-  const [description, setDescription] = useState("");
-  const [sets, setSets] = useState("");
-  const [repetitions, setRepetitions] = useState("");
-  const [time, setTime] = useState("");
+export function Program() {
   const [workoutProgramId, setWorkoutProgramId] = useState("");
-  const [personalTrainerId, setPersonalTrainerId] = useState("");
+  const [pName, setPName] = useState("");
+  const [description, setDescription] = useState("");
+  const [clientId, setClientId] = useState("");
+  const [programExercises, setProgramExercises]: any = useState("");
+  const [allExercises, setAllExercises]: any = useState("");
+
   const [formDisabled, setFormDisabled] = useState(true);
 
   const { id } = useParams();
@@ -51,29 +59,40 @@ export function ExercisePage() {
           Authorization: `Bearer ${jwt}`,
         },
       };
-      fetch(baseUrl + "api/Exercises/" + id, requestOptions)
+      fetch(baseUrl + "api/WorkoutPrograms/" + id, requestOptions)
         .then((res) => res.json())
         .then(
-          (exercise: Exercise) => {
-            console.log(JSON.stringify(exercise));
-            setEName(exercise.name);
-            setExerciseId(exercise.exerciseId.toString());
-            setDescription(exercise.description);
-            setSets(exercise.sets.toString());
-            setRepetitions(exercise.repetitions.toString());
-            setTime(exercise.time ? exercise.time : "");
-            setWorkoutProgramId(
-              exercise.workoutProgramId?.toString()
-                ? exercise.workoutProgramId?.toString()
-                : ""
-            );
-            setPersonalTrainerId(exercise.personalTrainerId.toString());
+          (program: WorkoutProgram) => {
+            console.log(JSON.stringify(program));
+            setPName(program.name);
+            setWorkoutProgramId(program.workoutProgramId.toString());
+            setDescription(program.description);
+            setClientId(program.clientId.toString());
+            setProgramExercises(program.exercises);
           },
           (error) => {
             console.log(JSON.stringify(error));
           }
         );
     }
+
+    const requestOptionsExercises = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      },
+    };
+    fetch(baseUrl + "api/Exercises", requestOptionsExercises)
+      .then((res) => res.json())
+      .then(
+        (exercises: Exercises) => {
+          setAllExercises(exercises);
+        },
+        (error) => {
+          console.log(JSON.stringify(error));
+        }
+      );
   }, []);
 
   function handleSubmit(event: any) {
@@ -86,20 +105,17 @@ export function ExercisePage() {
         Authorization: `Bearer ${jwt}`,
       },
       body: JSON.stringify({
-        exerciseId: id,
-        name: eName,
+        workoutProgramId: id,
+        name: pName,
         description: description,
-        sets: Number(sets),
-        repetitions: Number(repetitions),
-        time: time ? time : null,
-        workoutProgramId:
-          Number(workoutProgramId) == 0 ? null : Number(workoutProgramId),
-        personalTrainerId: Number(personalTrainerId),
+        exercises: programExercises,
+        personalTrainerId: user?.UserId,
+        clientId: clientId,
       }),
     };
-    fetch(baseUrl + "api/Exercises/" + id, requestOptions).then(
+    fetch(baseUrl + "api/WorkoutPrograms/" + id, requestOptions).then(
       () => {
-        navigate("/personal-trainer/exercises");
+        navigate("/personal-trainer/workout-programs");
       },
       (error) => {
         console.log(JSON.stringify(error));
@@ -108,26 +124,42 @@ export function ExercisePage() {
     );
   }
 
+  function handleChangeExercises(newValue: any, actionMetaData: any) {
+    console.log("New value: " + JSON.stringify(newValue));
+    console.log("Action meta data: " + JSON.stringify(actionMetaData));
+
+    var tempExercises: Exercises = [];
+
+    for (const item of newValue) {
+      console.log("Exercise: " + JSON.stringify(item.value));
+      item.value.exerciseId = 0;
+      item.value.workoutProgramId = workoutProgramId;
+      //   delete item.value.workoutProgramId;
+      tempExercises.push(item.value);
+    }
+
+    console.log("Temp exercises: " + JSON.stringify(tempExercises));
+    setProgramExercises(tempExercises);
+    console.log("Exercises lenght: " + programExercises.length);
+  }
+
   function validateForm() {
     return (
-      eName.length > 0 &&
-      exerciseId.length > 0 &&
+      pName.length > 0 &&
+      workoutProgramId.length > 0 &&
       description.length > 0 &&
-      sets.length > 0 &&
-      repetitions.length > 0 &&
-      // time.length > 0 &&
-      // workoutProgramId.length > 0 &&
-      personalTrainerId.length > 0
+      clientId.length > 0 &&
+      programExercises.length > 0
     );
   }
-  if (jwt && user) {
+  if (jwt && user && allExercises && programExercises) {
     return (
       <>
         <div>
           <TrainerNavBar name={user!.Name} />
         </div>
         <div className="form">
-          <h1>Exercise</h1>
+          <h1>Program</h1>
           <Form onSubmit={handleSubmit}>
             <div>
               <Form.Group controlId="eName">
@@ -136,22 +168,22 @@ export function ExercisePage() {
                   size="lg"
                   autoFocus
                   type="text"
-                  value={eName}
-                  onChange={(e) => setEName(e.target.value)}
+                  value={pName}
+                  onChange={(e) => setPName(e.target.value)}
                   disabled={formDisabled}
                 />
               </Form.Group>
             </div>
             <div>
-              <Form.Group controlId="exerciseId">
-                <Form.Label>Exercise id</Form.Label>
+              <Form.Group controlId="programId">
+                <Form.Label>Workout program Id</Form.Label>
                 <Form.Control
                   size="lg"
                   type="number"
                   min="0"
-                  value={exerciseId}
-                  onChange={(e) => setExerciseId(e.target.value)}
-                  disabled={formDisabled}
+                  value={workoutProgramId}
+                  onChange={(e) => setWorkoutProgramId(e.target.value)}
+                  disabled={true}
                 />
               </Form.Group>
             </div>
@@ -168,65 +200,31 @@ export function ExercisePage() {
               </Form.Group>
             </div>
             <div>
-              <Form.Group controlId="sets">
-                <Form.Label>Sets</Form.Label>
+              <Form.Label>Exercises</Form.Label>
+              <CreatableSelect
+                isMulti
+                isValidNewOption={() => false}
+                onChange={handleChangeExercises}
+                value={programExercises.map((exercise: Exercise) => ({
+                  label: exercise.name,
+                  value: exercise,
+                }))}
+                isDisabled={formDisabled}
+                options={allExercises.map((exercise: Exercise) => ({
+                  label: exercise.name,
+                  value: exercise,
+                }))}
+              />
+            </div>
+            <div>
+              <Form.Group controlId="clientId">
+                <Form.Label>Client Id</Form.Label>
                 <Form.Control
                   size="lg"
                   type="number"
                   min="1"
-                  value={sets}
-                  onChange={(e) => setSets(e.target.value)}
-                  disabled={formDisabled}
-                />
-              </Form.Group>
-            </div>
-            <div>
-              <Form.Group controlId="repetitions">
-                <Form.Label>Repetitions</Form.Label>
-                <Form.Control
-                  size="lg"
-                  type="number"
-                  min="1"
-                  value={repetitions}
-                  onChange={(e) => setRepetitions(e.target.value)}
-                  disabled={formDisabled}
-                />
-              </Form.Group>
-            </div>
-            <div>
-              <Form.Group controlId="time">
-                <Form.Label>Time</Form.Label>
-                <Form.Control
-                  size="lg"
-                  type="text"
-                  value={time}
-                  onChange={(e) => setTime(e.target?.value)}
-                  disabled={formDisabled}
-                />
-              </Form.Group>
-            </div>
-            <div>
-              <Form.Group controlId="workoutProgramId">
-                <Form.Label>Workout programe id</Form.Label>
-                <Form.Control
-                  size="lg"
-                  type="number"
-                  min="0"
-                  value={workoutProgramId}
-                  onChange={(e) => setWorkoutProgramId(e.target?.value)}
-                  disabled={formDisabled}
-                />
-              </Form.Group>
-            </div>
-            <div>
-              <Form.Group controlId="personalTrainerId">
-                <Form.Label>Personal trainer id</Form.Label>
-                <Form.Control
-                  size="lg"
-                  type="number"
-                  min="0"
-                  value={personalTrainerId}
-                  onChange={(e) => setPersonalTrainerId(e.target.value)}
+                  value={clientId}
+                  onChange={(e) => setClientId(e.target.value)}
                   disabled={formDisabled}
                 />
               </Form.Group>
@@ -268,9 +266,9 @@ export function ExercisePage() {
     );
   } else {
     return (
-      <div className="showExercise">
+      <div className="showProgram">
         <TrainerNavBar name={"Loading..."} />
-        <h1>Exerciset</h1>
+        <h1>Program</h1>
         <div>Loading...</div>
       </div>
     );

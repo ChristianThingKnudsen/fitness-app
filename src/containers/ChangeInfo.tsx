@@ -3,7 +3,7 @@ import { Form } from "react-bootstrap";
 import { ManagerNavBar } from "../NavBars/ManagerNavBar";
 import jwt_decode from "jwt-decode";
 import { useNavigate, useParams } from "react-router-dom";
-import { baseUrl, isAuthenticated, UserDecoded } from "../env";
+import { AccountType, baseUrl, isAuthenticated, UserDecoded } from "../env";
 import { TrainerNavBar } from "../NavBars/TrainerNavBar";
 import "./Form.css";
 import { Button } from "@mui/material";
@@ -14,7 +14,9 @@ export function ChangeInfo() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const jwt = localStorage.getItem("jwt");
+  const password = localStorage.getItem("password");
   const navigate = useNavigate();
   // const { id } = useParams();
   let id: any = null;
@@ -59,6 +61,7 @@ export function ChangeInfo() {
             setFirstName(response.firstName);
             setLastName(response.lastName);
             setEmail(response.email);
+            setNewPassword(password!);
           },
           (error) => {
             console.log(JSON.stringify(error));
@@ -66,6 +69,33 @@ export function ChangeInfo() {
         );
     }
   }, []);
+
+  async function putPassword() {
+    const requestOptions = {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${jwt}`,
+      },
+      body: JSON.stringify({
+        email: email,
+        password: newPassword,
+        oldPassword: password,
+      }),
+    };
+    fetch(baseUrl + "api/Users/Password", requestOptions)
+      // .then((res) => res.json())
+      .then(
+        (response: any) => {
+          console.log(JSON.stringify(response));
+          localStorage.setItem("jwt", response.jwt);
+          localStorage.setItem("password", newPassword);
+        },
+        (error) => {
+          console.log(JSON.stringify(error));
+        }
+      );
+  }
 
   function handleSubmit(event: any) {
     event.preventDefault();
@@ -80,33 +110,37 @@ export function ChangeInfo() {
       body: JSON.stringify({
         userId: id,
         // password: "aQ",
-        // personalTrainerId: 0, //TODO Maybe change this
+        // personalTrainerId: 276, //TODO Maybe change this
         firstName: firstName,
         lastName: lastName,
         email: email,
         accountType: user!.Role,
       }),
     };
-    fetch(baseUrl + "api/Users/" + id, requestOptions)
-      .then((res) => res.json())
-      .then(
-        (response) => {
-          console.log(JSON.stringify(response));
+    fetch(baseUrl + "api/Users/" + id, requestOptions).then(
+      () => {
+        // putPassword().then(() => { //TODO Put this back in
           user!.Role == "PersonalTrainer"
             ? navigate("/personal-trainer")
             : user!.Role == "Client"
             ? navigate("/client")
             : navigate("/");
-        },
-        (error) => {
-          console.log(JSON.stringify(error));
-          //TODO display error
-        }
-      );
+        // });
+      },
+      (error) => {
+        console.log(JSON.stringify(error));
+        //TODO display error
+      }
+    );
   }
 
   function validateForm() {
-    return email.length > 0 && firstName.length > 0 && lastName.length > 0;
+    return (
+      email.length > 0 &&
+      firstName.length > 0 &&
+      lastName.length > 0 &&
+      newPassword.length > 0
+    );
   }
 
   function NavBar(props: any) {
@@ -136,7 +170,7 @@ export function ChangeInfo() {
       <>
         <NavBar role={user!.Role} />
         <div className="form">
-          <h1>Edit trainer</h1>
+          <h1>Edit user</h1>
           <Form onSubmit={handleSubmit}>
             <Form.Group controlId="FirstName">
               <Form.Label>First name</Form.Label>
@@ -166,6 +200,16 @@ export function ChangeInfo() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group controlId="NewPassword">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                size="lg"
+                autoFocus
+                type="text"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
               />
             </Form.Group>
             <br />

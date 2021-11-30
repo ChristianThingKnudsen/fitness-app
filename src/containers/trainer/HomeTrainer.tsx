@@ -108,6 +108,7 @@ export function HomeTrainer() {
               {allClients.map(function (item: any) {
                 return (
                   <Box
+                    key={item.userId}
                     display="flex"
                     justifyContent="center"
                     alignItems="center"

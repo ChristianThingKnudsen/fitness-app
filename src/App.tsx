@@ -10,6 +10,11 @@ import { HomeClient } from "./containers/client/HomeClient";
 import { ExercisesPage } from "./containers/trainer/ExercisesPage";
 import { CreateExercise } from "./containers/trainer/CreateExercise";
 import { ExercisePage } from "./containers/trainer/ExercisePage";
+import { Programs } from "./containers/trainer/Programs";
+import { createProgram } from "typescript";
+import { CreateProgram } from "./containers/trainer/CreateProgram";
+import { Program } from "./containers/trainer/Program";
+import { ClientProgram } from "./containers/client/ClientProgram";
 
 function App() {
   return (
@@ -39,10 +44,29 @@ function App() {
             path="/personal-trainer/exercises/create"
             element={<CreateExercise />}
           />
-          <Route path="personal-trainer/exercises/:id" element={<ExercisePage />} />
+          <Route
+            path="personal-trainer/exercises/:id"
+            element={<ExercisePage />}
+          />
+          <Route
+            path="personal-trainer/workout-programs"
+            element={<Programs />}
+          />
+          <Route
+            path="personal-trainer/workout-programs/create"
+            element={<CreateProgram />}
+          />
+          <Route
+            path="personal-trainer/workout-programs/:id"
+            element={<Program />}
+          />
           {/* Client */}
           <Route path="/client" element={<HomeClient />} />
           <Route path="/client/change-info" element={<ChangeInfo />} />
+          <Route
+            path="client/workout-programs/:id"
+            element={<ClientProgram />}
+          />
           {/* Catch all */}
           <Route path="*" element={<Navigate to="/login" />} />
         </Routes>

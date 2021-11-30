@@ -15,7 +15,7 @@ export function Login() {
   console.log(jwt);
   var user: UserDecoded;
   console.log(localStorage.hasOwnProperty("jwt"));
-  if (localStorage.hasOwnProperty("jwt")) {
+  if (jwt) {
     console.log("Trying to decode");
     console.log(jwt);
     user = jwt_decode(jwt);
@@ -41,8 +41,9 @@ export function Login() {
       }
     }
   }
+
   useEffect(() => {
-    if (localStorage.hasOwnProperty("jwt")) {
+    if (jwt) {
       console.log("Completeting login...");
       completeLogin(user.Role);
     }
@@ -64,8 +65,9 @@ export function Login() {
       .then((res) => res.json())
       .then(
         (response) => {
-          console.log(JSON.stringify(response));
+          console.log(response);
           localStorage.setItem("jwt", response.jwt);
+          localStorage.setItem("password", password);
           console.log(
             "JWT decoded: " + JSON.stringify(jwt_decode(response.jwt))
           );
@@ -76,8 +78,15 @@ export function Login() {
         },
         (error) => {
           console.log(JSON.stringify(error));
+          localStorage.clear();
         }
-      );
+      )
+      .catch((error) => {
+        console.log("ERROR: " + error);
+        localStorage.clear();
+        setPassword("");
+        alert(error);
+      });
   }
 
   return (

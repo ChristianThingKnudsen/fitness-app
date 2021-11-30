@@ -12,13 +12,14 @@ export function TrainerNavBar(props: any) {
   return (
     <AppBar position="static">
       <Toolbar variant="dense">
-        <IconButton
-          edge="start"
+        <Typography
+          variant="h6"
           color="inherit"
-          aria-label="menu"
-          sx={{ mr: 2 }}
-        ></IconButton>
-        <Typography variant="h6" color="inherit" component="div">
+          component="div"
+          sx={{
+            mr: 3,
+          }}
+        >
           {"Signed in as trainer: " + props.name}
         </Typography>
         <Button
@@ -27,7 +28,7 @@ export function TrainerNavBar(props: any) {
           sx={{
             boxShadow: 7,
             borderRadius: 1,
-            mx: 2,
+            mx: 1,
           }}
           component={Link}
           to="/personal-trainer"
@@ -40,6 +41,7 @@ export function TrainerNavBar(props: any) {
           sx={{
             boxShadow: 7,
             borderRadius: 1,
+            mx: 1,
           }}
           component={Link}
           to="/personal-trainer/create-client"
@@ -52,7 +54,7 @@ export function TrainerNavBar(props: any) {
           sx={{
             boxShadow: 7,
             borderRadius: 1,
-            mx: 2,
+            mx: 1,
           }}
           component={Link}
           to="/personal-trainer/change-info"
@@ -65,7 +67,7 @@ export function TrainerNavBar(props: any) {
           sx={{
             boxShadow: 7,
             borderRadius: 1,
-            mx: 2,
+            mx: 1,
           }}
           component={Link}
           to="/personal-trainer/exercises"
@@ -73,12 +75,25 @@ export function TrainerNavBar(props: any) {
           Exercises
         </Button>
         <Button
+          color="secondary"
+          variant="contained"
+          sx={{
+            boxShadow: 7,
+            borderRadius: 1,
+            mx: 1,
+          }}
+          component={Link}
+          to="/personal-trainer/workout-programs"
+        >
+          Programs
+        </Button>
+        <Button
           color="primary"
           variant="contained"
           sx={{
             boxShadow: 7,
             borderRadius: 1,
-            ml: 2,
+            ml: 4,
           }}
           onClick={() => logout()}
         >
