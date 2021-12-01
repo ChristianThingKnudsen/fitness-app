@@ -1,5 +1,5 @@
 import { Form } from "react-bootstrap";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   baseUrl,
   Exercise,
@@ -9,8 +9,8 @@ import {
 } from "../../env";
 import jwt_decode from "jwt-decode";
 import { useEffect, useState } from "react";
-import CreatableSelect from "react-select/creatable";
 import { ClientNavBar } from "../../NavBars/ClientNavBar";
+import { Box, Button, List, ListItem, ListItemText } from "@mui/material";
 
 export function ClientProgram() {
   const [program, setProgram]: any = useState("");
@@ -101,7 +101,66 @@ export function ClientProgram() {
             </div>
             <div>
               <Form.Label>Exercises</Form.Label>
-              <CreatableSelect
+              <Box display="flex" justifyContent="center" alignItems="center">
+                <List
+                  sx={{
+                    bgcolor: "white",
+                    boxShadow: 7,
+                    borderRadius: 4,
+                    p: 2,
+                    my: 2,
+                    width: "100%",
+                    height: "50%",
+                  }}
+                  style={{
+                    maxHeight: "450px",
+                    overflow: "auto",
+                  }}
+                >
+                  {program.exercises.map(function (exercise: Exercise) {
+                    return (
+                      <Box
+                        key={exercise.exerciseId}
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
+                      >
+                        <ListItem
+                          key={exercise.exerciseId}
+                          sx={{
+                            bgcolor: "white",
+                            boxShadow: 7,
+                            borderRadius: 4,
+                            p: 2,
+                            mx: 0,
+                            my: 2,
+                          }}
+                        >
+                          <ListItemText primary={exercise.name} />
+                          <Button
+                            variant="contained"
+                            sx={{
+                              boxShadow: 7,
+                              borderRadius: 1,
+                              mx: 2,
+                            }}
+                            component={Link}
+                            to={
+                              "/client/workout-programs/" +
+                              id +
+                              "/exercises/" +
+                              exercise.exerciseId
+                            }
+                          >
+                            Show
+                          </Button>
+                        </ListItem>
+                      </Box>
+                    );
+                  })}
+                </List>
+              </Box>
+              {/* <CreatableSelect
                 isMulti
                 isValidNewOption={() => false}
                 value={program.exercises.map((exercise: Exercise) => ({
@@ -109,7 +168,7 @@ export function ClientProgram() {
                   value: exercise,
                 }))}
                 isDisabled={true}
-              />
+              /> */}
             </div>
             <div>
               <Form.Group controlId="clientId">

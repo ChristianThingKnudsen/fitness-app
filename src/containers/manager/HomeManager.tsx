@@ -110,6 +110,7 @@ export function HomeManager() {
                     display="flex"
                     justifyContent="center"
                     alignItems="center"
+                    key={item.userId}
                   >
                     <ListItem
                       key={item.userId}

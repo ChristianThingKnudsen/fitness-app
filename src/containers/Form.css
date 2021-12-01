@@ -81,7 +81,7 @@
   }
 
   .form input:disabled {
-    opacity: 0.4;
+    opacity: 1;
   }
 
   .form input[type="button"]:hover {

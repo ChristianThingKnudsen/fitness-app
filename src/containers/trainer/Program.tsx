@@ -20,6 +20,7 @@ export function Program() {
   const [description, setDescription] = useState("");
   const [clientId, setClientId] = useState("");
   const [programExercises, setProgramExercises]: any = useState("");
+  const [oldProgramExercises, setOldProgramExercises]: any = useState("");
   const [allExercises, setAllExercises]: any = useState("");
 
   const [formDisabled, setFormDisabled] = useState(true);
@@ -60,6 +61,7 @@ export function Program() {
             setDescription(program.description);
             setClientId(program.clientId.toString());
             setProgramExercises(program.exercises);
+            setOldProgramExercises(program.exercises);
           },
           (error) => {
             console.error(JSON.stringify(error));
@@ -106,6 +108,64 @@ export function Program() {
     };
     fetch(baseUrl + "api/WorkoutPrograms/" + id, requestOptions).then(
       () => {
+        for (const exercise of programExercises) {
+          if (
+            !oldProgramExercises.some(
+              (e: Exercise) => e.exerciseId === exercise.exerciseId
+            )
+          ) {
+            const requestOptions = {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${jwt}`,
+              },
+              body: JSON.stringify({
+                name: exercise.name,
+                description: exercise.description,
+                sets: exercise.sets,
+                repetitions: exercise.repetitions,
+                time: exercise.time,
+              }),
+            };
+            fetch(baseUrl + "api/Exercises/Program/" + id, requestOptions).then(
+              () => {
+                console.log("Added exercise");
+              },
+              (error) => {
+                alert(error);
+              }
+            );
+          }
+        }
+
+        for (const exercise of oldProgramExercises) {
+          if (
+            !programExercises.some(
+              (e: Exercise) => e.exerciseId === exercise.exerciseId
+            )
+          ) {
+            const requestOptions = {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${jwt}`,
+              },
+            };
+            fetch(
+              baseUrl + "api/Exercises/" + exercise.exerciseId,
+              requestOptions
+            ).then(
+              () => {
+                console.log("Deleted exercise");
+              },
+              (error) => {
+                alert(error);
+              }
+            );
+          }
+        }
+
         navigate("/personal-trainer/workout-programs");
       },
       (error) => {
@@ -118,7 +178,6 @@ export function Program() {
     var tempExercises: Exercises = [];
 
     for (const item of newValue) {
-      item.value.exerciseId = 0;
       item.value.workoutProgramId = workoutProgramId;
       tempExercises.push(item.value);
     }

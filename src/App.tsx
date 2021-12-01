@@ -14,6 +14,7 @@ import { Programs } from "./containers/trainer/Programs";
 import { CreateProgram } from "./containers/trainer/CreateProgram";
 import { Program } from "./containers/trainer/Program";
 import { ClientProgram } from "./containers/client/ClientProgram";
+import { ClientExercise } from "./containers/client/ClientExercise";
 
 function App() {
   return (
@@ -65,6 +66,10 @@ function App() {
           <Route
             path="client/workout-programs/:id"
             element={<ClientProgram />}
+          />
+          <Route
+            path="client/workout-programs/:pid/exercises/:eid"
+            element={<ClientExercise />}
           />
           {/* Catch all */}
           <Route path="*" element={<Navigate to="/login" />} />

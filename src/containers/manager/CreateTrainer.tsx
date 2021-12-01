@@ -51,11 +51,12 @@ export function CreateTrainer() {
     fetch(baseUrl + "api/Users", requestOptions)
       .then((res) => res.json())
       .then(
-        (response) => {
+        () => {
           navigate("/manager");
         },
         (error) => {
           console.error(JSON.stringify(error));
+          alert(error);
         }
       );
   }

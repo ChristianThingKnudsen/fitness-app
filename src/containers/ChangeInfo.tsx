@@ -14,6 +14,7 @@ export function ChangeInfo() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [personalTrainerId, setPersonalTrainerId] = useState("");
   const jwt = localStorage.getItem("jwt");
   const password = localStorage.getItem("password");
   const navigate = useNavigate();
@@ -51,6 +52,7 @@ export function ChangeInfo() {
             setLastName(response.lastName);
             setEmail(response.email);
             setNewPassword(password!);
+            setPersonalTrainerId(response.personalTrainerId);
           },
           (error) => {
             console.error(JSON.stringify(error));
@@ -58,30 +60,6 @@ export function ChangeInfo() {
         );
     }
   }, [authenticated, id, jwt, navigate, password]);
-
-  async function putPassword() {
-    const requestOptions = {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${jwt}`,
-      },
-      body: JSON.stringify({
-        email: email,
-        password: newPassword,
-        oldPassword: password,
-      }),
-    };
-    fetch(baseUrl + "api/Users/Password", requestOptions).then(
-      (response: any) => {
-        localStorage.setItem("jwt", response.jwt);
-        localStorage.setItem("password", newPassword);
-      },
-      (error) => {
-        console.log(JSON.stringify(error));
-      }
-    );
-  }
 
   function handleSubmit(event: any) {
     event.preventDefault();
@@ -98,17 +76,16 @@ export function ChangeInfo() {
         lastName: lastName,
         email: email,
         accountType: user!.Role,
+        personalTrainerId: personalTrainerId,
       }),
     };
     fetch(baseUrl + "api/Users/" + id, requestOptions).then(
       () => {
-        // putPassword().then(() => { //TODO Put this back in
         user!.Role === "PersonalTrainer"
           ? navigate("/personal-trainer")
           : user!.Role === "Client"
           ? navigate("/client")
           : navigate("/");
-        // });
       },
       (error) => {
         console.error(JSON.stringify(error));
