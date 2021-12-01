@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   baseUrl,
-  Exercise,
-  Exercises,
   isAuthenticated,
   UserDecoded,
   WorkoutProgram,
@@ -21,7 +19,7 @@ export function Programs() {
   const navigate = useNavigate();
 
   var user: UserDecoded | null;
-  var authenticated: boolean;
+  var authenticated: boolean = false;
 
   if (jwt) {
     user = jwt_decode(jwt);
@@ -31,13 +29,8 @@ export function Programs() {
   }
 
   useEffect(() => {
-    if (jwt) {
-      if (!authenticated) {
-        console.log("auth");
-        return navigate("/");
-      }
-    } else {
-      console.log("Not auth");
+    if (!jwt || !authenticated) {
+      console.error("Not authenticated redirecting to login");
       return navigate("/");
     }
 
@@ -55,14 +48,12 @@ export function Programs() {
           setAllPrograms(programs);
         },
         (error) => {
-          console.log(JSON.stringify(error));
+          console.error(JSON.stringify(error));
         }
       );
-  }, []);
+  }, [authenticated, jwt, navigate]);
 
   function deleteProgram(uid: number) {
-    console.log("URL delete: " + baseUrl + "api/WorkoutPrograms/" + uid);
-
     const requestOptions = {
       method: "DELETE",
       headers: {
@@ -72,14 +63,13 @@ export function Programs() {
     };
     fetch(baseUrl + "api/WorkoutPrograms/" + uid, requestOptions).then(
       (response) => {
-        console.log("Response delete: " + JSON.stringify(response));
         const newList = allPrograms.filter((program: WorkoutProgram) => {
           return program.workoutProgramId !== uid;
         });
         setAllPrograms(newList);
       },
       (error) => {
-        console.log("ERROR: " + error);
+        console.error(error);
       }
     );
   }

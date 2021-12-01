@@ -17,7 +17,7 @@ export function HomeClient() {
 
   const [allWorkouts, setAllWorkouts]: any = useState("");
   var user: UserDecoded | null;
-  var authenticated: boolean;
+  var authenticated: boolean = false;
 
   if (jwt) {
     user = jwt_decode(jwt);
@@ -27,13 +27,8 @@ export function HomeClient() {
   }
 
   useEffect(() => {
-    if (jwt) {
-      if (!authenticated) {
-        console.log("auth");
-        return navigate("/");
-      }
-    } else {
-      console.log("Not auth");
+    if (!jwt || !authenticated) {
+      console.error("Not authenticated redirecting to login");
       return navigate("/");
     }
 
@@ -54,17 +49,13 @@ export function HomeClient() {
           setAllWorkouts(workoutPrograms);
         },
         (error) => {
-          console.log(JSON.stringify(error));
+          console.error(JSON.stringify(error));
         }
       );
-  }, []);
+  }, [authenticated, jwt, navigate, user]);
 
   if (allWorkouts && jwt && user) {
-    console.log("Length: " + allWorkouts.length);
-    if (allWorkouts.length == 1) {
-      console.log(
-        "PATH: " + "client/workout-programs/" + allWorkouts[0].workoutProgramId
-      );
+    if (allWorkouts.length === 1) {
       navigate("/client/workout-programs/" + allWorkouts[0].workoutProgramId);
       return <div></div>;
     } else {

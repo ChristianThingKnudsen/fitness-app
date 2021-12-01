@@ -9,18 +9,7 @@ import {
   Users,
 } from "../../env";
 import { ManagerNavBar } from "../../NavBars/ManagerNavBar";
-import {
-  List,
-  ListItem,
-  Box,
-  IconButton,
-  Button,
-  ListItemText,
-  makeStyles,
-  Grid,
-} from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import { isTemplateTail } from "typescript";
+import { List, ListItem, Box, Button, ListItemText } from "@mui/material";
 import "../List.css";
 
 export function HomeManager() {
@@ -28,7 +17,7 @@ export function HomeManager() {
   const navigate = useNavigate();
 
   var user: UserDecoded | null;
-  var authenticated: boolean;
+  var authenticated: boolean = false;
   const [allTrainers, setAllTrainers]: any = useState("");
 
   if (jwt) {
@@ -39,13 +28,8 @@ export function HomeManager() {
   }
 
   useEffect(() => {
-    if (jwt) {
-      if (!authenticated) {
-        console.log("Not auth");
-        return navigate("/");
-      }
-    } else {
-      console.log("Not jwt");
+    if (!jwt || !authenticated) {
+      console.error("Not authenticated redirecting to login");
       return navigate("/");
     }
 
@@ -62,21 +46,19 @@ export function HomeManager() {
         (users: Users) => {
           const personalTrainers: Users = users.filter(
             (user: { accountType: AccountType }) => {
-              return user.accountType == "PersonalTrainer";
+              return user.accountType === "PersonalTrainer";
             }
           );
 
           setAllTrainers(personalTrainers);
         },
         (error) => {
-          console.log(JSON.stringify(error));
+          console.error(JSON.stringify(error));
         }
       );
-  }, []);
+  }, [authenticated, jwt, navigate]);
 
   function deleteUser(uid: string) {
-    console.log("URL delete: " + baseUrl + "api/Users/" + uid);
-
     const requestOptions = {
       method: "DELETE",
       headers: {
@@ -86,19 +68,18 @@ export function HomeManager() {
     };
     fetch(baseUrl + "api/Users/" + uid, requestOptions).then(
       (response) => {
-        console.log("Response delete: " + JSON.stringify(response));
         const newList = allTrainers.filter((item: any) => {
           return item.userId !== uid;
         });
         setAllTrainers(newList);
       },
       (error) => {
-        console.log("Error delete: " + error);
+        console.error("Error delete: " + error);
       }
     );
   }
 
-  if (allTrainers != null && allTrainers != "" && jwt && user) {
+  if (allTrainers != null && allTrainers !== "" && jwt && user) {
     return (
       <>
         <div>

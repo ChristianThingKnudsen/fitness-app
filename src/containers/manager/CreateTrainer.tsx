@@ -1,4 +1,3 @@
-// import Button from "react-bootstrap/Button";
 import { useEffect, useState } from "react";
 import Form from "react-bootstrap/Form";
 import { baseUrl, isAuthenticated, UserDecoded } from "../../env";
@@ -17,7 +16,7 @@ export function CreateTrainer() {
   const navigate = useNavigate();
 
   var user: UserDecoded | null;
-  var authenticated: boolean;
+  var authenticated: boolean = false;
 
   if (jwt) {
     user = jwt_decode(jwt);
@@ -27,32 +26,14 @@ export function CreateTrainer() {
   }
 
   useEffect(() => {
-    if (jwt) {
-      if (!authenticated) {
-        console.log("auth");
-        navigate("/");
-      }
-    } else {
-      console.log("Not auth");
-      navigate("/");
+    if (!jwt || !authenticated) {
+      console.error("Not authenticated redirecting to login");
+      return navigate("/");
     }
   });
 
   function handleSubmit(event: any) {
     event.preventDefault();
-
-    console.log(
-      "Submit:" +
-        firstName +
-        " " +
-        lastName +
-        " " +
-        email +
-        " " +
-        password +
-        " " +
-        jwt
-    );
     const requestOptions = {
       method: "POST",
       headers: {
@@ -71,12 +52,10 @@ export function CreateTrainer() {
       .then((res) => res.json())
       .then(
         (response) => {
-          console.log(JSON.stringify(response));
           navigate("/manager");
         },
         (error) => {
-          console.log(JSON.stringify(error));
-          //TODO display error
+          console.error(JSON.stringify(error));
         }
       );
   }
@@ -139,9 +118,6 @@ export function CreateTrainer() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </Form.Group>
-            {/* <Button size="lg" type="submit" disabled={!validateForm()}>
-      Submit
-    </Button> */}
             <br />
 
             <Button

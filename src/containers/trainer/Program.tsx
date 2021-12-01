@@ -13,7 +13,6 @@ import jwt_decode from "jwt-decode";
 import { useEffect, useState } from "react";
 import { TrainerNavBar } from "../../NavBars/TrainerNavBar";
 import CreatableSelect from "react-select/creatable";
-import { OnChangeValue } from "react-select";
 
 export function Program() {
   const [workoutProgramId, setWorkoutProgramId] = useState("");
@@ -29,7 +28,7 @@ export function Program() {
   const jwt = localStorage.getItem("jwt");
   const navigate = useNavigate();
   var user: UserDecoded | null;
-  var authenticated: boolean;
+  var authenticated: boolean = false;
 
   if (jwt) {
     user = jwt_decode(jwt);
@@ -39,19 +38,12 @@ export function Program() {
   }
 
   useEffect(() => {
-    if (jwt) {
-      if (!authenticated) {
-        console.log("auth");
-        navigate("/");
-      }
-    } else {
-      console.log("Not auth");
-      navigate("/");
+    if (!jwt || !authenticated) {
+      console.error("Not authenticated redirecting to login");
+      return navigate("/");
     }
 
     if (id) {
-      console.log("Exercise ID: " + id);
-
       const requestOptions = {
         method: "GET",
         headers: {
@@ -63,7 +55,6 @@ export function Program() {
         .then((res) => res.json())
         .then(
           (program: WorkoutProgram) => {
-            console.log(JSON.stringify(program));
             setPName(program.name);
             setWorkoutProgramId(program.workoutProgramId.toString());
             setDescription(program.description);
@@ -71,7 +62,7 @@ export function Program() {
             setProgramExercises(program.exercises);
           },
           (error) => {
-            console.log(JSON.stringify(error));
+            console.error(JSON.stringify(error));
           }
         );
     }
@@ -90,10 +81,10 @@ export function Program() {
           setAllExercises(exercises);
         },
         (error) => {
-          console.log(JSON.stringify(error));
+          console.error(JSON.stringify(error));
         }
       );
-  }, []);
+  }, [authenticated, id, jwt, navigate]);
 
   function handleSubmit(event: any) {
     event.preventDefault();
@@ -118,29 +109,21 @@ export function Program() {
         navigate("/personal-trainer/workout-programs");
       },
       (error) => {
-        console.log(JSON.stringify(error));
         alert(error);
       }
     );
   }
 
   function handleChangeExercises(newValue: any, actionMetaData: any) {
-    console.log("New value: " + JSON.stringify(newValue));
-    console.log("Action meta data: " + JSON.stringify(actionMetaData));
-
     var tempExercises: Exercises = [];
 
     for (const item of newValue) {
-      console.log("Exercise: " + JSON.stringify(item.value));
       item.value.exerciseId = 0;
       item.value.workoutProgramId = workoutProgramId;
-      //   delete item.value.workoutProgramId;
       tempExercises.push(item.value);
     }
 
-    console.log("Temp exercises: " + JSON.stringify(tempExercises));
     setProgramExercises(tempExercises);
-    console.log("Exercises lenght: " + programExercises.length);
   }
 
   function validateForm() {

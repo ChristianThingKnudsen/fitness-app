@@ -21,7 +21,7 @@ export function ExercisePage() {
   const jwt = localStorage.getItem("jwt");
   const navigate = useNavigate();
   var user: UserDecoded | null;
-  var authenticated: boolean;
+  var authenticated: boolean = false;
 
   if (jwt) {
     user = jwt_decode(jwt);
@@ -31,19 +31,12 @@ export function ExercisePage() {
   }
 
   useEffect(() => {
-    if (jwt) {
-      if (!authenticated) {
-        console.log("auth");
-        navigate("/");
-      }
-    } else {
-      console.log("Not auth");
-      navigate("/");
+    if (!jwt || !authenticated) {
+      console.error("Not authenticated redirecting to login");
+      return navigate("/");
     }
 
     if (id) {
-      console.log("Exercise ID: " + id);
-
       const requestOptions = {
         method: "GET",
         headers: {
@@ -55,7 +48,6 @@ export function ExercisePage() {
         .then((res) => res.json())
         .then(
           (exercise: Exercise) => {
-            console.log(JSON.stringify(exercise));
             setEName(exercise.name);
             setExerciseId(exercise.exerciseId.toString());
             setDescription(exercise.description);
@@ -70,11 +62,11 @@ export function ExercisePage() {
             setPersonalTrainerId(exercise.personalTrainerId.toString());
           },
           (error) => {
-            console.log(JSON.stringify(error));
+            console.error(JSON.stringify(error));
           }
         );
     }
-  }, []);
+  }, [authenticated, id, jwt, navigate]);
 
   function handleSubmit(event: any) {
     event.preventDefault();
@@ -93,7 +85,7 @@ export function ExercisePage() {
         repetitions: Number(repetitions),
         time: time ? time : null,
         workoutProgramId:
-          Number(workoutProgramId) == 0 ? null : Number(workoutProgramId),
+          Number(workoutProgramId) === 0 ? null : Number(workoutProgramId),
         personalTrainerId: Number(personalTrainerId),
       }),
     };
@@ -102,7 +94,7 @@ export function ExercisePage() {
         navigate("/personal-trainer/exercises");
       },
       (error) => {
-        console.log(JSON.stringify(error));
+        console.error(JSON.stringify(error));
         alert(error);
       }
     );
@@ -115,8 +107,6 @@ export function ExercisePage() {
       description.length > 0 &&
       sets.length > 0 &&
       repetitions.length > 0 &&
-      // time.length > 0 &&
-      // workoutProgramId.length > 0 &&
       personalTrainerId.length > 0
     );
   }
@@ -270,7 +260,7 @@ export function ExercisePage() {
     return (
       <div className="showExercise">
         <TrainerNavBar name={"Loading..."} />
-        <h1>Exerciset</h1>
+        <h1>Exercise</h1>
         <div>Loading...</div>
       </div>
     );

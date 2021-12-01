@@ -2,13 +2,12 @@ import { useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import { ManagerNavBar } from "../NavBars/ManagerNavBar";
 import jwt_decode from "jwt-decode";
-import { useNavigate, useParams } from "react-router-dom";
-import { AccountType, baseUrl, isAuthenticated, UserDecoded } from "../env";
+import { useNavigate } from "react-router-dom";
+import { baseUrl, isAuthenticated, UserDecoded } from "../env";
 import { TrainerNavBar } from "../NavBars/TrainerNavBar";
 import "./Form.css";
 import { Button } from "@mui/material";
 import { ClientNavBar } from "../NavBars/ClientNavBar";
-import { AnyMxRecord } from "dns";
 
 export function ChangeInfo() {
   const [firstName, setFirstName] = useState("");
@@ -18,35 +17,25 @@ export function ChangeInfo() {
   const jwt = localStorage.getItem("jwt");
   const password = localStorage.getItem("password");
   const navigate = useNavigate();
-  // const { id } = useParams();
   let id: any = null;
   var user: UserDecoded | null;
-  var authenticated: boolean;
-  var header: string;
+  var authenticated: boolean = false;
 
   if (jwt) {
     user = jwt_decode(jwt);
     authenticated = isAuthenticated(user!.Role);
     id = user!.UserId;
-    header = "Edit " + user!.Role;
   } else {
     user = null;
   }
 
   useEffect(() => {
-    if (jwt) {
-      if (!authenticated) {
-        console.log("auth");
-        navigate("/");
-      }
-    } else {
-      console.log("Not auth");
-      navigate("/");
+    if (!jwt || !authenticated) {
+      console.error("Not authenticated redirecting to login");
+      return navigate("/");
     }
 
     if (id) {
-      console.log("Edit ID: " + id);
-
       const requestOptions = {
         method: "GET",
         headers: {
@@ -64,11 +53,11 @@ export function ChangeInfo() {
             setNewPassword(password!);
           },
           (error) => {
-            console.log(JSON.stringify(error));
+            console.error(JSON.stringify(error));
           }
         );
     }
-  }, []);
+  }, [authenticated, id, jwt, navigate, password]);
 
   async function putPassword() {
     const requestOptions = {
@@ -83,23 +72,19 @@ export function ChangeInfo() {
         oldPassword: password,
       }),
     };
-    fetch(baseUrl + "api/Users/Password", requestOptions)
-      // .then((res) => res.json())
-      .then(
-        (response: any) => {
-          console.log(JSON.stringify(response));
-          localStorage.setItem("jwt", response.jwt);
-          localStorage.setItem("password", newPassword);
-        },
-        (error) => {
-          console.log(JSON.stringify(error));
-        }
-      );
+    fetch(baseUrl + "api/Users/Password", requestOptions).then(
+      (response: any) => {
+        localStorage.setItem("jwt", response.jwt);
+        localStorage.setItem("password", newPassword);
+      },
+      (error) => {
+        console.log(JSON.stringify(error));
+      }
+    );
   }
 
   function handleSubmit(event: any) {
     event.preventDefault();
-    console.log("ID: " + id);
 
     const requestOptions = {
       method: "PUT",
@@ -109,8 +94,6 @@ export function ChangeInfo() {
       },
       body: JSON.stringify({
         userId: id,
-        // password: "aQ",
-        // personalTrainerId: 276, //TODO Maybe change this
         firstName: firstName,
         lastName: lastName,
         email: email,
@@ -120,16 +103,15 @@ export function ChangeInfo() {
     fetch(baseUrl + "api/Users/" + id, requestOptions).then(
       () => {
         // putPassword().then(() => { //TODO Put this back in
-          user!.Role == "PersonalTrainer"
-            ? navigate("/personal-trainer")
-            : user!.Role == "Client"
-            ? navigate("/client")
-            : navigate("/");
+        user!.Role === "PersonalTrainer"
+          ? navigate("/personal-trainer")
+          : user!.Role === "Client"
+          ? navigate("/client")
+          : navigate("/");
         // });
       },
       (error) => {
-        console.log(JSON.stringify(error));
-        //TODO display error
+        console.error(JSON.stringify(error));
       }
     );
   }
@@ -144,13 +126,13 @@ export function ChangeInfo() {
   }
 
   function NavBar(props: any) {
-    if (props.role == "Client") {
+    if (props.role === "Client") {
       return (
         <div>
           <ClientNavBar name={user!.Name} />
         </div>
       );
-    } else if (props.role == "PersonalTrainer") {
+    } else if (props.role === "PersonalTrainer") {
       return (
         <div>
           <TrainerNavBar name={user!.Name} />

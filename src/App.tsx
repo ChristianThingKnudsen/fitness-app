@@ -11,7 +11,6 @@ import { ExercisesPage } from "./containers/trainer/ExercisesPage";
 import { CreateExercise } from "./containers/trainer/CreateExercise";
 import { ExercisePage } from "./containers/trainer/ExercisePage";
 import { Programs } from "./containers/trainer/Programs";
-import { createProgram } from "typescript";
 import { CreateProgram } from "./containers/trainer/CreateProgram";
 import { Program } from "./containers/trainer/Program";
 import { ClientProgram } from "./containers/client/ClientProgram";

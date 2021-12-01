@@ -1,9 +1,7 @@
-// import Button from "react-bootstrap/Button";
 import { useEffect, useState } from "react";
 import Form from "react-bootstrap/Form";
 import { baseUrl, isAuthenticated, UserDecoded } from "../../env";
 import jwt_decode from "jwt-decode";
-import { ManagerNavBar } from "../../NavBars/ManagerNavBar";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import { TrainerNavBar } from "../../NavBars/TrainerNavBar";
@@ -28,32 +26,14 @@ export function CreateClient() {
   }
 
   useEffect(() => {
-    if (jwt) {
-      if (!authenticated) {
-        console.log("auth");
-        navigate("/");
-      }
-    } else {
-      console.log("Not auth");
-      navigate("/");
+    if (!jwt || !authenticated) {
+      console.error("Not authenticated redirecting to login");
+      return navigate("/");
     }
   });
 
   function handleSubmit(event: any) {
     event.preventDefault();
-
-    console.log(
-      "Submit:" +
-        firstName +
-        " " +
-        lastName +
-        " " +
-        email +
-        " " +
-        password +
-        " " +
-        jwt
-    );
     const requestOptions = {
       method: "POST",
       headers: {
@@ -73,12 +53,10 @@ export function CreateClient() {
       .then((res) => res.json())
       .then(
         (response) => {
-          console.log(JSON.stringify(response));
           navigate("/personal-trainer");
         },
         (error) => {
-          console.log(JSON.stringify(error));
-          //TODO display error
+          console.error(JSON.stringify(error));
         }
       );
   }
@@ -141,9 +119,6 @@ export function CreateClient() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </Form.Group>
-            {/* <Button size="lg" type="submit" disabled={!validateForm()}>
-      Submit
-    </Button> */}
             <br />
 
             <Button

@@ -19,7 +19,7 @@ export function ExercisesPage() {
   const navigate = useNavigate();
 
   var user: UserDecoded | null;
-  var authenticated: boolean;
+  var authenticated: boolean = false;
 
   if (jwt) {
     user = jwt_decode(jwt);
@@ -29,13 +29,8 @@ export function ExercisesPage() {
   }
 
   useEffect(() => {
-    if (jwt) {
-      if (!authenticated) {
-        console.log("auth");
-        return navigate("/");
-      }
-    } else {
-      console.log("Not auth");
+    if (!jwt || !authenticated) {
+      console.error("Not authenticated redirecting to login");
       return navigate("/");
     }
 
@@ -53,14 +48,12 @@ export function ExercisesPage() {
           setAllExercises(exercises);
         },
         (error) => {
-          console.log(JSON.stringify(error));
+          console.error(JSON.stringify(error));
         }
       );
-  }, []);
+  }, [authenticated, jwt, navigate]);
 
   function deleteExercise(uid: number) {
-    console.log("URL delete: " + baseUrl + "api/Exercises/" + uid);
-
     const requestOptions = {
       method: "DELETE",
       headers: {
@@ -70,14 +63,13 @@ export function ExercisesPage() {
     };
     fetch(baseUrl + "api/Exercises/" + uid, requestOptions).then(
       (response) => {
-        console.log("Response delete: " + JSON.stringify(response));
         const newList = allExercises.filter((exercise: Exercise) => {
           return exercise.exerciseId !== uid;
         });
         setAllExercises(newList);
       },
       (error) => {
-        console.log("Error delete: " + error);
+        console.error(error);
       }
     );
   }

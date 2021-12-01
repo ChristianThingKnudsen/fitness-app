@@ -1,7 +1,6 @@
 import jwt_decode from "jwt-decode";
 
 export const baseUrl: string = "https://afe2021fitness.azurewebsites.net/";
-// export const baseUrl: string = "https://localhost:44311/";
 
 // Types
 export type AccountType = "Client" | "PersonalTrainer" | "Manager";

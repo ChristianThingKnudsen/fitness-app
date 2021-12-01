@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AccountType, baseUrl, UserDecoded } from "../env";
 import { useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
@@ -11,13 +11,8 @@ export function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const jwt: any = localStorage.getItem("jwt");
-  console.log("JWT:");
-  console.log(jwt);
   var user: UserDecoded;
-  console.log(localStorage.hasOwnProperty("jwt"));
   if (jwt) {
-    console.log("Trying to decode");
-    console.log(jwt);
     user = jwt_decode(jwt);
   }
 
@@ -44,7 +39,6 @@ export function Login() {
 
   useEffect(() => {
     if (jwt) {
-      console.log("Completeting login...");
       completeLogin(user.Role);
     }
   });
@@ -55,7 +49,6 @@ export function Login() {
 
   function handleSubmit(event: any) {
     event.preventDefault();
-    console.log("Submit:" + email + " " + password);
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -65,24 +58,19 @@ export function Login() {
       .then((res) => res.json())
       .then(
         (response) => {
-          console.log(response);
           localStorage.setItem("jwt", response.jwt);
           localStorage.setItem("password", password);
-          console.log(
-            "JWT decoded: " + JSON.stringify(jwt_decode(response.jwt))
-          );
           var user: UserDecoded = jwt_decode(response.jwt);
           var accountType: AccountType = user.Role;
-          console.log("AccountType: " + accountType);
           completeLogin(accountType);
         },
         (error) => {
-          console.log(JSON.stringify(error));
+          console.error(JSON.stringify(error));
           localStorage.clear();
         }
       )
       .catch((error) => {
-        console.log("ERROR: " + error);
+        console.error(error);
         localStorage.clear();
         setPassword("");
         alert(error);

@@ -11,7 +11,7 @@ export function HomeTrainer() {
   const navigate = useNavigate();
 
   var user: UserDecoded | null;
-  var authenticated: boolean;
+  var authenticated: boolean = false;
   const [allClients, setAllClients]: any = useState("");
 
   if (jwt) {
@@ -22,13 +22,8 @@ export function HomeTrainer() {
   }
 
   useEffect(() => {
-    if (jwt) {
-      if (!authenticated) {
-        console.log("auth");
-        return navigate("/");
-      }
-    } else {
-      console.log("Not auth");
+    if (!jwt || !authenticated) {
+      console.error("Not authenticated redirecting to login");
       return navigate("/");
     }
 
@@ -43,21 +38,15 @@ export function HomeTrainer() {
       .then((res) => res.json())
       .then(
         (response) => {
-          // const result = response.filter((obj: { accountType: string }) => {
-          //   return obj.accountType == "Client";
-          // });
-
           setAllClients(response);
         },
         (error) => {
-          console.log(JSON.stringify(error));
+          console.error(JSON.stringify(error));
         }
       );
-  }, []);
+  }, [authenticated, jwt, navigate]);
 
   function deleteUser(uid: string) {
-    console.log("URL delete: " + baseUrl + "api/Users/" + uid);
-
     const requestOptions = {
       method: "DELETE",
       headers: {
@@ -67,14 +56,13 @@ export function HomeTrainer() {
     };
     fetch(baseUrl + "api/Users/" + uid, requestOptions).then(
       (response) => {
-        console.log("Response delete: " + JSON.stringify(response));
         const newList = allClients.filter((item: any) => {
           return item.userId !== uid;
         });
         setAllClients(newList);
       },
       (error) => {
-        console.log("Error delete: " + error);
+        console.error(error);
       }
     );
   }
@@ -88,7 +76,6 @@ export function HomeTrainer() {
         <div className="list">
           <h1>Home Trainer</h1>
           <h2>Here are all your clients</h2>
-          {/* disablePadding */}
           <Box display="flex" justifyContent="center" alignItems="center">
             <List
               sx={{

@@ -1,19 +1,15 @@
-import { Button } from "@mui/material";
 import { Form } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   baseUrl,
   Exercise,
-  Exercises,
   isAuthenticated,
   UserDecoded,
   WorkoutProgram,
 } from "../../env";
 import jwt_decode from "jwt-decode";
 import { useEffect, useState } from "react";
-import { TrainerNavBar } from "../../NavBars/TrainerNavBar";
 import CreatableSelect from "react-select/creatable";
-import { OnChangeValue } from "react-select";
 import { ClientNavBar } from "../../NavBars/ClientNavBar";
 
 export function ClientProgram() {
@@ -23,7 +19,7 @@ export function ClientProgram() {
   const jwt = localStorage.getItem("jwt");
   const navigate = useNavigate();
   var user: UserDecoded | null;
-  var authenticated: boolean;
+  var authenticated: boolean = false;
 
   if (jwt) {
     user = jwt_decode(jwt);
@@ -33,19 +29,12 @@ export function ClientProgram() {
   }
 
   useEffect(() => {
-    if (jwt) {
-      if (!authenticated) {
-        console.log("auth");
-        navigate("/");
-      }
-    } else {
-      console.log("Not auth");
-      navigate("/");
+    if (!jwt || !authenticated) {
+      console.error("Not authenticated redirecting to login");
+      return navigate("/");
     }
 
     if (id) {
-      console.log("Exercise ID: " + id);
-
       const requestOptions = {
         method: "GET",
         headers: {
@@ -57,15 +46,14 @@ export function ClientProgram() {
         .then((res) => res.json())
         .then(
           (program: WorkoutProgram) => {
-            console.log(JSON.stringify(program));
             setProgram(program);
           },
           (error) => {
-            console.log(JSON.stringify(error));
+            console.error(JSON.stringify(error));
           }
         );
     }
-  }, []);
+  }, [authenticated, id, jwt, navigate]);
 
   if (jwt && user && program) {
     return (
